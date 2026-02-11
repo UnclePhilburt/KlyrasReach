@@ -67,5 +67,7 @@ crashlytics-build.properties
 [Aa]ssets/[Ss]treamingAssets/aa.meta
 [Aa]ssets/[Ss]treamingAssets/aa/*
 
-# KEEP Docs folder - this is what we want to publish!
-# (Everything else is ignored, but Docs is included)
+# KEEP docs folder - this is what we want to publish!
+# (Everything else is ignored, but docs is included)
+!docs/
+!docs/**
