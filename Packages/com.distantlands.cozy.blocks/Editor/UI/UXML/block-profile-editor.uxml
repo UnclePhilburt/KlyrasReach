@@ -1,0 +1,80 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.distantlands.cozy.core/Editor/UI/Globals.uss?fileID=7433441132597879392&amp;guid=60b39676bc45100478c0c8a083850788&amp;type=3#Globals" />
+    <ui:VisualElement name="tabs" class="tab-group" style="background-color: rgba(0, 0, 0, 0.3);">
+        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="lighting" class="tab selected" style="flex-grow: 1; flex-shrink: 1; flex-direction: row-reverse;">
+            <ui:Label tabindex="-1" text="Lighting" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+        </ui:Button>
+        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="fog" class="tab" style="flex-grow: 1; flex-shrink: 1;">
+            <ui:Label tabindex="-1" text="Fog" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+        </ui:Button>
+        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="clouds" class="tab" style="flex-grow: 1; flex-shrink: 1;">
+            <ui:Label tabindex="-1" text="Clouds" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+        </ui:Button>
+        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="celestials" class="tab" style="flex-grow: 1; flex-shrink: 1;">
+            <ui:Label tabindex="-1" text="Celestials" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+        </ui:Button>
+    </ui:VisualElement>
+    <ui:VisualElement name="tab-content" style="flex-grow: 1; background-color: rgb(57, 57, 57);">
+        <ui:VisualElement name="lighting" class="hidden" style="flex-grow: 0;">
+            <ui:Label tabindex="-1" text="Atmosphere &amp; Lighting" parse-escape-sequences="true" display-tooltip-when-elided="true" class="h1" />
+            <ui:VisualElement class="section-bg" style="flex-grow: 0;">
+                <ui:Label tabindex="-1" text="Sky" parse-escape-sequences="true" display-tooltip-when-elided="true" class="h2" />
+                <uie:PropertyField binding-path="skyZenithColor" />
+                <uie:PropertyField binding-path="skyHorizonColor" class="mb-md" />
+                <ui:Label tabindex="-1" text="Lighting" parse-escape-sequences="true" display-tooltip-when-elided="true" class="h2" />
+                <uie:PropertyField binding-path="sunlightColor" />
+                <uie:PropertyField binding-path="moonlightColor" class="mb-md" />
+                <uie:PropertyField binding-path="ambientLightHorizonColor" style="white-space: nowrap; text-overflow: ellipsis;" />
+                <uie:PropertyField binding-path="ambientLightZenithColor" />
+                <uie:PropertyField binding-path="ambientLightMultiplier" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="fog" class="hidden">
+            <ui:Label tabindex="-1" text="Fog" parse-escape-sequences="true" display-tooltip-when-elided="true" class="h1" />
+            <ui:VisualElement class="section-bg" style="flex-grow: 0;">
+                <ui:Label tabindex="-1" text="Coloring" parse-escape-sequences="true" display-tooltip-when-elided="true" class="h2" />
+                <uie:PropertyField binding-path="fogColor1" />
+                <uie:PropertyField binding-path="fogColor2" />
+                <uie:PropertyField binding-path="fogColor3" />
+                <uie:PropertyField binding-path="fogColor4" />
+                <uie:PropertyField binding-path="fogColor5" class="mb-md" />
+                <ui:Label tabindex="-1" text="Generation" parse-escape-sequences="true" display-tooltip-when-elided="true" class="h2" />
+                <uie:PropertyField binding-path="fogSmoothness" class="mb-md" />
+                <ui:Label tabindex="-1" text="Flare" parse-escape-sequences="true" display-tooltip-when-elided="true" class="h2" />
+                <uie:PropertyField binding-path="fogFlareColor" />
+                <uie:PropertyField binding-path="fogMoonFlareColor" />
+                <uie:PropertyField binding-path="fogLightFlareIntensity" />
+                <uie:PropertyField binding-path="fogLightFlareFalloff" class="mb-md" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="clouds" class="hidden">
+            <ui:Label tabindex="-1" text="Clouds" parse-escape-sequences="true" display-tooltip-when-elided="true" class="h1" />
+            <ui:VisualElement class="section-bg" style="flex-grow: 0;">
+                <ui:Label tabindex="-1" text="Coloring" parse-escape-sequences="true" display-tooltip-when-elided="true" class="h2" />
+                <uie:PropertyField binding-path="cloudColor" />
+                <uie:PropertyField binding-path="cloudHighlightColor" />
+                <uie:PropertyField binding-path="highAltitudeCloudColor" />
+                <uie:PropertyField binding-path="cloudMoonColor" />
+                <uie:PropertyField binding-path="cloudTextureColor" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="celestials" class="hidden">
+            <ui:Label tabindex="-1" text="Celestials &amp; VFX" parse-escape-sequences="true" display-tooltip-when-elided="true" class="h1" />
+            <ui:VisualElement class="section-bg">
+                <ui:Label tabindex="-1" text="Sun" parse-escape-sequences="true" display-tooltip-when-elided="true" class="h2" />
+                <uie:PropertyField binding-path="sunColor" />
+                <uie:PropertyField binding-path="sunFlareColor" label="Sun Halo Color" />
+                <uie:PropertyField binding-path="sunFlareFalloff" label="Sun Halo Falloff" class="mb-md" />
+                <ui:Label tabindex="-1" text="Moon" parse-escape-sequences="true" display-tooltip-when-elided="true" class="h2" />
+                <uie:PropertyField binding-path="moonFalloff" label="Moon Halo Falloff" class="mb-md" />
+                <ui:Label tabindex="-1" text="Celestials" parse-escape-sequences="true" display-tooltip-when-elided="true" class="h2" />
+                <uie:PropertyField binding-path="starColor" class="mb-md" />
+                <uie:PropertyField binding-path="galaxy1Color" />
+                <uie:PropertyField binding-path="galaxy2Color" />
+                <uie:PropertyField binding-path="galaxy3Color" />
+                <uie:PropertyField binding-path="galaxyIntensity" class="mb-md" />
+                <uie:PropertyField binding-path="lightScatteringColor" class="mb-md" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

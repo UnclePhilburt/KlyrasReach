@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3bb62cd63fec79840870fdd625c7082e
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 307494
+  packageName: 'COZY: Horizon - Sky Layers Module'
+  packageVersion: 1.1
+  assetPath: Packages/com.distantlands.cozy.horizon/Custom Render Pipelines/Import
+    for URP.unitypackage
+  uploadId: 783561

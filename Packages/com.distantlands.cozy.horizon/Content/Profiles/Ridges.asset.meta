@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 423daa87c5042bc4086168503f574635
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 307494
+  packageName: 'COZY: Horizon - Sky Layers Module'
+  packageVersion: 1.1
+  assetPath: Packages/com.distantlands.cozy.horizon/Content/Profiles/Ridges.asset
+  uploadId: 783561

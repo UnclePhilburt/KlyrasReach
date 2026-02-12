@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 781d7eae6e0d5994996b7c1cd222aa53
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 238051
+  packageName: 'COZY: Blocks - Preset-Based Atmosphere Module'
+  packageVersion: 1.7.0
+  assetPath: Packages/com.distantlands.cozy.blocks/Runtime/DistantLands.Cozy.Blocks.Runtime.asmdef
+  uploadId: 726032

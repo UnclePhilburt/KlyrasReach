@@ -1,0 +1,28 @@
+{
+  "name": "com.distantlands.cozy.blocks",
+  "displayName": "COZY: Blocks - Extended Atmosphere Module",
+  "version": "1.7.0",
+  "author": {
+    "name": "Distant Lands",
+    "email": "contact@distantlands.space",
+    "discord": "https://discord.gg/eZXxGCp9ww",
+    "url": "https://distantlands.space/"
+  },
+  "unity": "2022.3",
+  "description": "Bring new control and ease of use to your COZY: Weather system with BLOCKS! Easily evaluate colors, set up day gradients, and manage time-of-day colors with the new custom module.",
+  "keywords": [
+    "Cozy Weather 3",
+    "Weather",
+    "Clouds",
+    "Fog",
+    "Sky",
+    "Distant Lands",
+    "Stylized"
+  ],
+  "documentationUrl": "https://distant-lands.gitbook.io/cozy-stylized-weather-documentation/how-it-works/modules/blocks-module",
+  "changelogUrl": "https://distant-lands.gitbook.io/cozy-stylized-weather-documentation/welcome/changelog",
+  "hideInEditor": false,
+  "dependencies": {
+    "com.distantlands.cozy.core": "3.5.0"
+  }
+}

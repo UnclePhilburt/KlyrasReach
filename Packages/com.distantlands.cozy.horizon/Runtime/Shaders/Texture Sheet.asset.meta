@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1c768855257bd0d4facec4e13f76699a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 307494
+  packageName: 'COZY: Horizon - Sky Layers Module'
+  packageVersion: 1.1
+  assetPath: Packages/com.distantlands.cozy.horizon/Runtime/Shaders/Texture Sheet.asset
+  uploadId: 783561

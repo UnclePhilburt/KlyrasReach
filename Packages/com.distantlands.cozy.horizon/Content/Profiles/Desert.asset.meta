@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1207c2e6be54fe04ca4c8ba44798562a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 307494
+  packageName: 'COZY: Horizon - Sky Layers Module'
+  packageVersion: 1.1
+  assetPath: Packages/com.distantlands.cozy.horizon/Content/Profiles/Desert.asset
+  uploadId: 783561

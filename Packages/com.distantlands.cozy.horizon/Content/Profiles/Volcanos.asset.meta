@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d6e7f6c3c1d52354cb1ed2fb6964dec7
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 307494
+  packageName: 'COZY: Horizon - Sky Layers Module'
+  packageVersion: 1.1
+  assetPath: Packages/com.distantlands.cozy.horizon/Content/Profiles/Volcanos.asset
+  uploadId: 783561

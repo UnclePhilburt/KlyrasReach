@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 42f22465c52b0644795bc6b0214dc65d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 238051
+  packageName: 'COZY: Blocks - Preset-Based Atmosphere Module'
+  packageVersion: 1.7.0
+  assetPath: Packages/com.distantlands.cozy.blocks/Runtime/BlocksBlendable.cs
+  uploadId: 726032

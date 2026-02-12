@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a552ed3738b380543b8e5b3699e4e7dd
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 307494
+  packageName: 'COZY: Horizon - Sky Layers Module'
+  packageVersion: 1.1
+  assetPath: Packages/com.distantlands.cozy.horizon/Content/Profiles/Canyon.asset
+  uploadId: 783561

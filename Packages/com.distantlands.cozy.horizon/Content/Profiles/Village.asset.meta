@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 99322f4513b025b46be1551a94c4ea95
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 307494
+  packageName: 'COZY: Horizon - Sky Layers Module'
+  packageVersion: 1.1
+  assetPath: Packages/com.distantlands.cozy.horizon/Content/Profiles/Village.asset
+  uploadId: 783561

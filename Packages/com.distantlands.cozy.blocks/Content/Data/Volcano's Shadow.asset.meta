@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6e96abcae94470448aeb138d6350dc11
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 238051
+  packageName: 'COZY: Blocks - Preset-Based Atmosphere Module'
+  packageVersion: 1.7.0
+  assetPath: Packages/com.distantlands.cozy.blocks/Content/Data/Volcano's Shadow.asset
+  uploadId: 726032

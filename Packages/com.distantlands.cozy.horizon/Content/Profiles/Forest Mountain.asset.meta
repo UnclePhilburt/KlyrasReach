@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a0a9a596b8d23e7439c1aa2e21077869
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 307494
+  packageName: 'COZY: Horizon - Sky Layers Module'
+  packageVersion: 1.1
+  assetPath: Packages/com.distantlands.cozy.horizon/Content/Profiles/Forest Mountain.asset
+  uploadId: 783561

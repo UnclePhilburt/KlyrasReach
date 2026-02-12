@@ -1,0 +1,20 @@
+{
+    "name": "DistantLands.Cozy.Horizon.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:5492a51f516277543a92d676903897bf",
+        "GUID:5706c50feecb01b4cb045870dd1a027e",
+        "GUID:40f6d2a6aa2a5434fba44ad34135d67d"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

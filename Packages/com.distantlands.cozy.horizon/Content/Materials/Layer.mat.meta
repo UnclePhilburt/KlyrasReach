@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3315ca0a16bd6b04c908ac5d9235eff3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 307494
+  packageName: 'COZY: Horizon - Sky Layers Module'
+  packageVersion: 1.1
+  assetPath: Packages/com.distantlands.cozy.horizon/Content/Materials/Layer.mat
+  uploadId: 783561

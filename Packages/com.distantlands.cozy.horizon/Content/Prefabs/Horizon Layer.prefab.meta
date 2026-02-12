@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 47a602154e8db7e438aa32561692a5ab
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 307494
+  packageName: 'COZY: Horizon - Sky Layers Module'
+  packageVersion: 1.1
+  assetPath: Packages/com.distantlands.cozy.horizon/Content/Prefabs/Horizon Layer.prefab
+  uploadId: 783561

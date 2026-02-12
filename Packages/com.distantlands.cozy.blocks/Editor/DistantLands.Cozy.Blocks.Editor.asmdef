@@ -1,0 +1,20 @@
+{
+    "name": "DistantLands.Cozy.Blocks.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:5492a51f516277543a92d676903897bf",
+        "GUID:781d7eae6e0d5994996b7c1cd222aa53",
+        "GUID:5706c50feecb01b4cb045870dd1a027e"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

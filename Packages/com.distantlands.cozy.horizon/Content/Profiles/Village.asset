@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50eb6fea401532345aff2751f7889149, type: 3}
+  m_Name: Village
+  m_EditorClassIdentifier: 
+  layers:
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: 3fe35d8f45b37774d92b4e7dbe5a2676, type: 3}
+    color: {r: 0.18396229, g: 0.18396229, b: 0.18396229, a: 1}
+    fogLightAmount: 1
+    fogAmount: 0.832
+    placementHeight: 0.078
+    verticalScale: 0.655
+    tiling: 4
+    angle: 176
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 0
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: f6e55a225f5cc2145b5438c67023c1d7, type: 3}
+    color: {r: 0.18396229, g: 0.18396229, b: 0.18396229, a: 1}
+    fogLightAmount: 1
+    fogAmount: 0.717
+    placementHeight: 0.078
+    verticalScale: 0.655
+    tiling: 4
+    angle: 132
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 1
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: 51100ceab7170ef419b0efb6df6fc772, type: 3}
+    color: {r: 0.18396229, g: 0.18396229, b: 0.18396229, a: 1}
+    fogLightAmount: 1
+    fogAmount: 0.649
+    placementHeight: 0.01
+    verticalScale: 0.655
+    tiling: 4
+    angle: 105
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 2

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 974f84bf3db305b469c71b719905b241
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 307494
+  packageName: 'COZY: Horizon - Sky Layers Module'
+  packageVersion: 1.1
+  assetPath: Packages/com.distantlands.cozy.horizon/README.txt
+  uploadId: 783561

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 9d32193723af4ce4aac27e1d10ad243f
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 307494
+  packageName: 'COZY: Horizon - Sky Layers Module'
+  packageVersion: 1.1
+  assetPath: Packages/com.distantlands.cozy.horizon/Runtime/Shaders/Sky Layers (Cubemap).shader
+  uploadId: 783561

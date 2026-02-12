@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50eb6fea401532345aff2751f7889149, type: 3}
+  m_Name: Islands
+  m_EditorClassIdentifier: 
+  layers:
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: ea7df8ed606f66447b3eec1ffc5de232, type: 3}
+    color: {r: 0, g: 0, b: 0, a: 1}
+    fogLightAmount: 1
+    fogAmount: 0.441
+    placementHeight: 0
+    verticalScale: 0.825
+    tiling: 1
+    angle: 162
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 2
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: 178a59c1e210b114fa0161360cbe1d94, type: 3}
+    color: {r: 0, g: 0, b: 0, a: 1}
+    fogLightAmount: 1
+    fogAmount: 0.652
+    placementHeight: 0
+    verticalScale: 0.825
+    tiling: 1
+    angle: 136
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 0

@@ -1,0 +1,141 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50eb6fea401532345aff2751f7889149, type: 3}
+  m_Name: Forest Mountain
+  m_EditorClassIdentifier: 
+  layers:
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: 40339dadb2c26c0499675793252db849, type: 3}
+    color: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}
+    fogLightAmount: 1
+    fogAmount: 0.786
+    placementHeight: 0.062
+    verticalScale: 0.599
+    tiling: 2
+    angle: 134
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 0
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: 09ae1992fa77d544f916cd4f5f0f3006, type: 3}
+    color: {r: 0, g: 0, b: 0, a: 1}
+    fogLightAmount: 0.812
+    fogAmount: 0.784
+    placementHeight: -0.002
+    verticalScale: 0.599
+    tiling: 4
+    angle: 134
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 1
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: 09ae1992fa77d544f916cd4f5f0f3006, type: 3}
+    color: {r: 0, g: 0, b: 0, a: 1}
+    fogLightAmount: 0.812
+    fogAmount: 0.713
+    placementHeight: -0.002
+    verticalScale: 0.599
+    tiling: 4
+    angle: 191
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 2
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: cff0dde32e6f91248a94829c8665c7c2, type: 3}
+    color: {r: 0, g: 0, b: 0, a: 1}
+    fogLightAmount: 0.812
+    fogAmount: 0.641
+    placementHeight: 0.066
+    verticalScale: 0.599
+    tiling: 4
+    angle: 168
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 3
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: d185912bd8e4bbe42b833437fb9db13d, type: 3}
+    color: {r: 0, g: 0, b: 0, a: 1}
+    fogLightAmount: 0.812
+    fogAmount: 0.548
+    placementHeight: 0.019
+    verticalScale: 0.599
+    tiling: 4
+    angle: 168
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 4
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: 6c624c2bf93617841ad2fb11e7ce4316, type: 3}
+    color: {r: 0, g: 0, b: 0, a: 1}
+    fogLightAmount: 0.812
+    fogAmount: 0.469
+    placementHeight: 0.006
+    verticalScale: 0.599
+    tiling: 4
+    angle: 168
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 5
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: d185912bd8e4bbe42b833437fb9db13d, type: 3}
+    color: {r: 0.051886797, g: 0.086485654, b: 0.20754719, a: 1}
+    fogLightAmount: 0.812
+    fogAmount: 0.406
+    placementHeight: -0.091
+    verticalScale: 0.808
+    tiling: 3
+    angle: 168
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 6

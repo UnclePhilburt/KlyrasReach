@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50eb6fea401532345aff2751f7889149, type: 3}
+  m_Name: Forest Fire
+  m_EditorClassIdentifier: 
+  layers:
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: d185912bd8e4bbe42b833437fb9db13d, type: 3}
+    color: {r: 0, g: 0, b: 0, a: 1}
+    fogLightAmount: 1
+    fogAmount: 0.441
+    placementHeight: 0.06
+    verticalScale: 0.685
+    tiling: 4
+    angle: 162
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 2
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: 04b8bf3ebb3679f4a8b423762188f665, type: 3}
+    color: {r: 0, g: 0, b: 0, a: 1}
+    fogLightAmount: 1
+    fogAmount: 0.652
+    placementHeight: 0.412
+    verticalScale: 0.825
+    tiling: 1
+    angle: 136
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 0
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: c4813cb46fae8ad4da3a2fe49c085dec, type: 3}
+    color: {r: 0, g: 0, b: 0, a: 1}
+    fogLightAmount: 1
+    fogAmount: 0.46
+    placementHeight: 0.054
+    verticalScale: 0.609
+    tiling: 3
+    angle: 313
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 0

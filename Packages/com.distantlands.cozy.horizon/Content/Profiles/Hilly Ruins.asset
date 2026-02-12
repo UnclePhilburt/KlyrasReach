@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50eb6fea401532345aff2751f7889149, type: 3}
+  m_Name: Hilly Ruins
+  m_EditorClassIdentifier: 
+  layers:
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: abdf788fa45525944a904d845db73e50, type: 3}
+    color: {r: 0.08018869, g: 0.08018869, b: 0.08018869, a: 1}
+    fogLightAmount: 0.856
+    fogAmount: 0.95915
+    placementHeight: 0.011
+    verticalScale: 0.718
+    tiling: 3
+    angle: 119
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 0
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: 3fe35d8f45b37774d92b4e7dbe5a2676, type: 3}
+    color: {r: 0.078431375, g: 0.078431375, b: 0.078431375, a: 1}
+    fogLightAmount: 0.508
+    fogAmount: 0.77
+    placementHeight: -0.039
+    verticalScale: 0.559
+    tiling: 5
+    angle: 0
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 1
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: 1ba4445cce2f3a348818f15c52494e0c, type: 3}
+    color: {r: 0.078431375, g: 0.078431375, b: 0.078431375, a: 1}
+    fogLightAmount: 0.449
+    fogAmount: 0.604
+    placementHeight: -0.028
+    verticalScale: 0.632
+    tiling: 4
+    angle: 0
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 2
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: abdf788fa45525944a904d845db73e50, type: 3}
+    color: {r: 0.078431375, g: 0.078431375, b: 0.078431375, a: 1}
+    fogLightAmount: 0.293
+    fogAmount: 0.512
+    placementHeight: -0.136
+    verticalScale: 0.787
+    tiling: 2
+    angle: 0
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 3

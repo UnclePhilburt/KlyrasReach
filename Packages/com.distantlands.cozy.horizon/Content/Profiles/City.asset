@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50eb6fea401532345aff2751f7889149, type: 3}
+  m_Name: City
+  m_EditorClassIdentifier: 
+  layers:
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: a83681572a918da4bbfa52d2558a2068, type: 3}
+    color: {r: 0, g: 0, b: 0, a: 1}
+    fogLightAmount: 1
+    fogAmount: 0.366
+    placementHeight: 0.125
+    verticalScale: 0.599
+    tiling: 2
+    angle: 134
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 2
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: a83681572a918da4bbfa52d2558a2068, type: 3}
+    color: {r: 0, g: 0, b: 0, a: 1}
+    fogLightAmount: 1
+    fogAmount: 0.441
+    placementHeight: 0.155
+    verticalScale: 0.599
+    tiling: 3
+    angle: 208
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 1
+  - layerType: 1
+    placementLocation: 1
+    texture: {fileID: 2800000, guid: 40339dadb2c26c0499675793252db849, type: 3}
+    color: {r: 0, g: 0, b: 0, a: 1}
+    fogLightAmount: 1
+    fogAmount: 0.691
+    placementHeight: 0.079
+    verticalScale: 0.599
+    tiling: 3
+    angle: 208
+    rows: 0
+    columns: 0
+    framerate: 0
+    pitch: 0
+    yaw: 0
+    roll: 0
+    size: 0
+    renderPriorityOffset: 0

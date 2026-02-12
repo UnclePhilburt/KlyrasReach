@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 1a6dfc6ff1cbe664c9ac3d6e1ff9a513
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 307494
+  packageName: 'COZY: Horizon - Sky Layers Module'
+  packageVersion: 1.1
+  assetPath: Packages/com.distantlands.cozy.horizon/Runtime/Shaders/Sky Layers (Ribbon).shader
+  uploadId: 783561

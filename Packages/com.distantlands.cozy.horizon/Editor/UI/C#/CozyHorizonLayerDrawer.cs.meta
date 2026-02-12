@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 7eb4f93aea59a8c4d930fee08379dee8
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 307494
+  packageName: 'COZY: Horizon - Sky Layers Module'
+  packageVersion: 1.1
+  assetPath: Packages/com.distantlands.cozy.horizon/Editor/UI/C#/CozyHorizonLayerDrawer.cs
+  uploadId: 783561

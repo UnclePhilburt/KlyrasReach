@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: c4440ca81a352384c8015f5aebf2022b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: f5d6310db546a634d9947429df1475ef, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 238051
+  packageName: 'COZY: Blocks - Preset-Based Atmosphere Module'
+  packageVersion: 1.7.0
+  assetPath: Packages/com.distantlands.cozy.blocks/Runtime/ColorBlockOverride.cs
+  uploadId: 726032

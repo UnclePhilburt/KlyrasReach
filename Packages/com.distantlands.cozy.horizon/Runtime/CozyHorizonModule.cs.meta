@@ -1,0 +1,27 @@
+fileFormatVersion: 2
+guid: a73e555eeebbd1442a2a1afb94c3623a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - cachedWeatherSphere: {instanceID: 0}
+  - cachedSystem: {instanceID: 0}
+  - layerPrefab: {fileID: 1401993188666770390, guid: 47a602154e8db7e438aa32561692a5ab,
+      type: 3}
+  - cubemapShader: {fileID: 4800000, guid: 9d32193723af4ce4aac27e1d10ad243f, type: 3}
+  - ribbonShader: {fileID: 4800000, guid: 1a6dfc6ff1cbe664c9ac3d6e1ff9a513, type: 3}
+  - spriteShader: {fileID: 4800000, guid: 8d2b3889b14d7064cac6f8c38b8eee24, type: 3}
+  - textureSheetShader: {fileID: 4800000, guid: 6ebbe195b59d8824bb7a4c61d5b8552d,
+      type: 3}
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: a037df2145d55a4479274379668c34cb, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 307494
+  packageName: 'COZY: Horizon - Sky Layers Module'
+  packageVersion: 1.1
+  assetPath: Packages/com.distantlands.cozy.horizon/Runtime/CozyHorizonModule.cs
+  uploadId: 783561
