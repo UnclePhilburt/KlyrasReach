@@ -1,13 +1,13 @@
 /*
- * Proximity-Based Sliding Door for Klyra's Reach
+ * 3-Panel Proximity-Based Sliding Door for Klyra's Reach
  *
  * PURPOSE:
- * This version doesn't rely on trigger collisions - it simply checks distance
- * to the player every frame. More reliable with Opsive character controllers.
+ * Sliding door with 3 panels: left, right, and top-middle
+ * Left/right panels slide horizontally, top panel slides down vertically
  *
  * HOW TO USE:
  * 1. Attach to your door GameObject
- * 2. Assign the door panel(s) in Inspector
+ * 2. Assign all 3 door panels in Inspector (left, right, top)
  * 3. Press Play - it will automatically find and track the player
  */
 
@@ -16,21 +16,27 @@ using UnityEngine;
 namespace KlyrasReach.Systems
 {
     /// <summary>
-    /// Sliding door that uses distance checking instead of trigger collisions
-    /// More reliable with character controllers on custom layers
+    /// Sliding door with 3 panels that uses distance checking
+    /// Left and right panels slide horizontally, top panel slides vertically
     /// </summary>
-    public class ProximitySlidingDoor : MonoBehaviour
+    public class ProximitySlidingDoor3Panel : MonoBehaviour
     {
         [Header("Door Panel References")]
-        [Tooltip("The door panel that will slide (or left panel for double doors)")]
+        [Tooltip("Left door panel that slides left")]
         [SerializeField] private Transform _leftDoorPanel;
 
-        [Tooltip("Optional second door panel for double doors")]
+        [Tooltip("Right door panel that slides right")]
         [SerializeField] private Transform _rightDoorPanel;
 
+        [Tooltip("Top/middle door panel that slides down")]
+        [SerializeField] private Transform _topDoorPanel;
+
         [Header("Door Behavior Settings")]
-        [Tooltip("How far the door slides when opening")]
-        [SerializeField] private float _slideDistance = 5f;
+        [Tooltip("How far the side panels slide when opening")]
+        [SerializeField] private float _sideSlideDistance = 5f;
+
+        [Tooltip("How far the top panel slides down when opening")]
+        [SerializeField] private float _topSlideDistance = 3f;
 
         [Tooltip("Speed of the door sliding animation")]
         [SerializeField] private float _slideSpeed = 2f;
@@ -38,8 +44,12 @@ namespace KlyrasReach.Systems
         [Tooltip("How close the player needs to be to open the door")]
         [SerializeField] private float _detectionRange = 3f;
 
-        [Tooltip("Direction the door slides: X=left/right, Y=up/down, Z=forward/back")]
-        [SerializeField] private Vector3 _slideDirection = Vector3.right;
+        [Header("Slide Directions")]
+        [Tooltip("Direction the side panels slide (usually X for left/right)")]
+        [SerializeField] private Vector3 _sideSlideDirection = Vector3.right;
+
+        [Tooltip("Direction the top panel slides (usually -Y for down)")]
+        [SerializeField] private Vector3 _topSlideDirection = Vector3.down;
 
         [Header("Player Detection")]
         [Tooltip("Tag to identify the player GameObject")]
@@ -57,6 +67,8 @@ namespace KlyrasReach.Systems
         private Vector3 _leftDoorOpenPosition;
         private Vector3 _rightDoorClosedPosition;
         private Vector3 _rightDoorOpenPosition;
+        private Vector3 _topDoorClosedPosition;
+        private Vector3 _topDoorOpenPosition;
 
         private bool _isOpen = false;
         private Transform _playerTransform;
@@ -69,37 +81,36 @@ namespace KlyrasReach.Systems
         private void Start()
         {
             // Validate setup
-            if (_leftDoorPanel == null)
+            if (_leftDoorPanel == null || _rightDoorPanel == null || _topDoorPanel == null)
             {
-                Debug.LogError("[ProximitySlidingDoor] No door panel assigned! Please assign at least the Left Door Panel.");
+                Debug.LogError("[ProximitySlidingDoor3Panel] Missing door panels! Please assign all 3 panels (left, right, top).");
                 enabled = false;
                 return;
             }
 
             // Store the door's starting world position for distance checks
-            // This prevents the door from leaving its own detection range when it moves
             _detectionPoint = transform.position;
 
-            // Store closed positions
+            // Store closed positions and calculate open positions
             _leftDoorClosedPosition = _leftDoorPanel.localPosition;
-            _leftDoorOpenPosition = _leftDoorClosedPosition + (_slideDirection.normalized * _slideDistance);
+            _leftDoorOpenPosition = _leftDoorClosedPosition + (_sideSlideDirection.normalized * _sideSlideDistance);
 
-            if (_rightDoorPanel != null)
-            {
-                _rightDoorClosedPosition = _rightDoorPanel.localPosition;
-                _rightDoorOpenPosition = _rightDoorClosedPosition + (-_slideDirection.normalized * _slideDistance);
-            }
+            _rightDoorClosedPosition = _rightDoorPanel.localPosition;
+            _rightDoorOpenPosition = _rightDoorClosedPosition + (-_sideSlideDirection.normalized * _sideSlideDistance);
+
+            _topDoorClosedPosition = _topDoorPanel.localPosition;
+            _topDoorOpenPosition = _topDoorClosedPosition + (-_topSlideDirection.normalized * _topSlideDistance);
 
             // Find the player
             GameObject playerObject = GameObject.FindGameObjectWithTag(_playerTag);
             if (playerObject != null)
             {
                 _playerTransform = playerObject.transform;
-                Debug.Log($"[ProximitySlidingDoor] Found player: {playerObject.name}");
+                Debug.Log($"[ProximitySlidingDoor3Panel] Found player: {playerObject.name}");
             }
             else
             {
-                Debug.LogError($"[ProximitySlidingDoor] Could not find player with tag '{_playerTag}'!");
+                Debug.LogError($"[ProximitySlidingDoor3Panel] Could not find player with tag '{_playerTag}'!");
             }
 
             // Setup audio
@@ -111,7 +122,7 @@ namespace KlyrasReach.Systems
                 _audioSource.volume = _audioVolume;
             }
 
-            Debug.Log($"[ProximitySlidingDoor] Door '{gameObject.name}' initialized. Detection range: {_detectionRange} units");
+            Debug.Log($"[ProximitySlidingDoor3Panel] Door '{gameObject.name}' initialized. Detection range: {_detectionRange} units");
         }
 
         /// <summary>
@@ -126,7 +137,7 @@ namespace KlyrasReach.Systems
                 if (playerObject != null)
                 {
                     _playerTransform = playerObject.transform;
-                    Debug.Log($"[ProximitySlidingDoor] Found player: {playerObject.name}");
+                    Debug.Log($"[ProximitySlidingDoor3Panel] Found player: {playerObject.name}");
                 }
                 else
                 {
@@ -135,7 +146,6 @@ namespace KlyrasReach.Systems
             }
 
             // Calculate distance between door's ORIGINAL position and player
-            // This prevents doors from leaving their own detection range when they slide
             float distanceToPlayer = Vector3.Distance(_detectionPoint, _playerTransform.position);
 
             // Determine if player is in range
@@ -144,22 +154,26 @@ namespace KlyrasReach.Systems
             // Determine target positions based on whether door should be open
             Vector3 leftTarget = playerInRange ? _leftDoorOpenPosition : _leftDoorClosedPosition;
             Vector3 rightTarget = playerInRange ? _rightDoorOpenPosition : _rightDoorClosedPosition;
+            Vector3 topTarget = playerInRange ? _topDoorOpenPosition : _topDoorClosedPosition;
 
-            // Smoothly move door panels
+            // Smoothly move all door panels
             _leftDoorPanel.localPosition = Vector3.Lerp(
                 _leftDoorPanel.localPosition,
                 leftTarget,
                 Time.deltaTime * _slideSpeed
             );
 
-            if (_rightDoorPanel != null)
-            {
-                _rightDoorPanel.localPosition = Vector3.Lerp(
-                    _rightDoorPanel.localPosition,
-                    rightTarget,
-                    Time.deltaTime * _slideSpeed
-                );
-            }
+            _rightDoorPanel.localPosition = Vector3.Lerp(
+                _rightDoorPanel.localPosition,
+                rightTarget,
+                Time.deltaTime * _slideSpeed
+            );
+
+            _topDoorPanel.localPosition = Vector3.Lerp(
+                _topDoorPanel.localPosition,
+                topTarget,
+                Time.deltaTime * _slideSpeed
+            );
 
             // Check if door state changed (for sounds and logging)
             UpdateDoorState(playerInRange);
@@ -175,14 +189,14 @@ namespace KlyrasReach.Systems
             {
                 _isOpen = true;
                 PlaySound(_openSound);
-                Debug.Log($"[ProximitySlidingDoor] Door '{gameObject.name}' opening");
+                Debug.Log($"[ProximitySlidingDoor3Panel] Door '{gameObject.name}' opening");
             }
             // Player just left range - start closing
             else if (!playerInRange && _isOpen)
             {
                 _isOpen = false;
                 PlaySound(_closeSound);
-                Debug.Log($"[ProximitySlidingDoor] Door '{gameObject.name}' closing");
+                Debug.Log($"[ProximitySlidingDoor3Panel] Door '{gameObject.name}' closing");
             }
         }
 
@@ -207,12 +221,31 @@ namespace KlyrasReach.Systems
             Gizmos.color = new Color(0, 1, 0, 0.3f);
             Gizmos.DrawWireSphere(debugPosition, _detectionRange);
 
-            // Draw slide direction arrow
+            // Draw slide direction arrows for side panels
             if (_leftDoorPanel != null)
             {
                 Gizmos.color = Color.yellow;
                 Vector3 start = Application.isPlaying ? _leftDoorClosedPosition : _leftDoorPanel.position;
-                Vector3 end = start + (_slideDirection.normalized * _slideDistance);
+                Vector3 end = start + (-_sideSlideDirection.normalized * _sideSlideDistance);
+                Gizmos.DrawLine(start, end);
+                Gizmos.DrawSphere(end, 0.15f);
+            }
+
+            if (_rightDoorPanel != null)
+            {
+                Gizmos.color = Color.yellow;
+                Vector3 start = Application.isPlaying ? _rightDoorClosedPosition : _rightDoorPanel.position;
+                Vector3 end = start + (_sideSlideDirection.normalized * _sideSlideDistance);
+                Gizmos.DrawLine(start, end);
+                Gizmos.DrawSphere(end, 0.15f);
+            }
+
+            // Draw slide direction arrow for top panel
+            if (_topDoorPanel != null)
+            {
+                Gizmos.color = Color.cyan;
+                Vector3 start = Application.isPlaying ? _topDoorClosedPosition : _topDoorPanel.position;
+                Vector3 end = start + (_topSlideDirection.normalized * _topSlideDistance);
                 Gizmos.DrawLine(start, end);
                 Gizmos.DrawSphere(end, 0.15f);
             }
