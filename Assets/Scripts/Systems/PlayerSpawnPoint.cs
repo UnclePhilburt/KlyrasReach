@@ -49,8 +49,19 @@ namespace KlyrasReach.Systems
         /// </summary>
         private void Awake()
         {
+            Debug.Log($"[PlayerSpawnPoint] Awake called - _spawnOnStart: {_spawnOnStart}");
+
             if (!_spawnOnStart)
             {
+                Debug.Log("[PlayerSpawnPoint] _spawnOnStart is false - exiting");
+                return;
+            }
+
+            // Check if a player already exists (e.g., spawned by landing pad)
+            GameObject existingPlayer = GameObject.FindGameObjectWithTag("Player");
+            if (existingPlayer != null)
+            {
+                Debug.Log($"[PlayerSpawnPoint] Player already exists at {existingPlayer.transform.position} - skipping spawn");
                 return;
             }
 
@@ -58,13 +69,17 @@ namespace KlyrasReach.Systems
             if (_skipIfBoardingShip)
             {
                 int isBoardingShip = PlayerPrefs.GetInt("IsBoardingShip", 0);
+                Debug.Log($"[PlayerSpawnPoint] IsBoardingShip flag: {isBoardingShip}");
                 if (isBoardingShip == 1)
                 {
-                    Debug.Log("[PlayerSpawnPoint] Player is boarding ship - skipping player spawn");
-                    return;
+                    Debug.Log("[PlayerSpawnPoint] Player is boarding ship - but no player exists! Clearing flag and spawning.");
+                    // If the flag is set but no player exists, clear it and spawn normally
+                    PlayerPrefs.SetInt("IsBoardingShip", 0);
+                    PlayerPrefs.Save();
                 }
             }
 
+            Debug.Log("[PlayerSpawnPoint] All checks passed - spawning player");
             SpawnPlayer();
         }
 
@@ -196,9 +211,9 @@ namespace KlyrasReach.Systems
             var cameraController = camera.GetComponent<Opsive.UltimateCharacterController.Camera.CameraController>();
             if (cameraController != null)
             {
-                // Assign character to camera
+                // Assign character to camera (this triggers initialization)
                 cameraController.Character = _spawnedPlayer;
-                Debug.Log("[PlayerSpawnPoint] Linked camera to character");
+                Debug.Log("[PlayerSpawnPoint] Assigned character to camera controller");
             }
 
             // Get character locomotion component
@@ -211,6 +226,34 @@ namespace KlyrasReach.Systems
             else
             {
                 Debug.LogWarning("[PlayerSpawnPoint] Could not fully link character and camera - some components missing");
+            }
+
+            // Link CrosshairsMonitor to character
+            LinkCrosshairsToCharacter();
+        }
+
+        /// <summary>
+        /// Links the CrosshairsMonitor to the spawned character
+        /// NOTE: If CrosshairsMonitor has "Attach To Camera" enabled, this happens automatically!
+        /// This method is a backup in case that setting is disabled.
+        /// </summary>
+        private void LinkCrosshairsToCharacter()
+        {
+            if (_spawnedPlayer == null) return;
+
+            // Find the CrosshairsMonitor in the scene (should be on Canvas)
+            var crosshairsMonitor = FindObjectOfType<Opsive.UltimateCharacterController.UI.CrosshairsMonitor>();
+
+            if (crosshairsMonitor != null)
+            {
+                // Set the character (this triggers the proper initialization)
+                // Note: This usually happens automatically via camera events if "Attach To Camera" is enabled
+                crosshairsMonitor.Character = _spawnedPlayer;
+                Debug.Log("[PlayerSpawnPoint] Linked CrosshairsMonitor to character");
+            }
+            else
+            {
+                Debug.LogWarning("[PlayerSpawnPoint] CrosshairsMonitor not found in scene - crosshair may not work");
             }
         }
 

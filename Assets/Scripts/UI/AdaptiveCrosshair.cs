@@ -25,7 +25,7 @@ namespace KlyrasReach.UI
         [SerializeField] private float _dotSize = 4f;
 
         [Tooltip("How often to sample background color (seconds)")]
-        [SerializeField] private float _sampleInterval = 0.1f;
+        [SerializeField] private float _sampleInterval = 0.5f;
 
         [Tooltip("Use outline for extra visibility?")]
         [SerializeField] private bool _useOutline = true;
@@ -34,18 +34,19 @@ namespace KlyrasReach.UI
         private Canvas _canvas;
         private Image _dot;
         private Camera _mainCamera;
-        private float _nextSampleTime;
-        private RenderTexture _sampleTexture;
         private Texture2D _readTexture;
+        private Color _lastSampledColor = Color.gray;
 
         private void Start()
         {
             _mainCamera = Camera.main;
             CreateCrosshair();
 
-            // Create small texture for sampling
-            _sampleTexture = new RenderTexture(1, 1, 0);
+            // Create small texture for reading screen pixels
             _readTexture = new Texture2D(1, 1);
+
+            // Start the coroutine that samples colors
+            StartCoroutine(SampleColorRoutine());
         }
 
         private void CreateCrosshair()
@@ -115,58 +116,42 @@ namespace KlyrasReach.UI
             outline.effectDistance = new Vector2(1, 1);
         }
 
-        private void Update()
+        /// <summary>
+        /// Coroutine that samples screen color at intervals
+        /// </summary>
+        private System.Collections.IEnumerator SampleColorRoutine()
         {
-            if (Time.time >= _nextSampleTime)
+            while (true)
             {
-                UpdateCrosshairColor();
-                _nextSampleTime = Time.time + _sampleInterval;
+                // Wait for end of frame when rendering is complete
+                yield return new WaitForEndOfFrame();
+
+                if (_mainCamera != null && _dot != null)
+                {
+                    // Read pixel from center of screen
+                    int centerX = Screen.width / 2;
+                    int centerY = Screen.height / 2;
+
+                    _readTexture.ReadPixels(new Rect(centerX, centerY, 1, 1), 0, 0);
+                    _readTexture.Apply();
+
+                    _lastSampledColor = _readTexture.GetPixel(0, 0);
+
+                    // Calculate contrasting color
+                    float brightness = _lastSampledColor.r * 0.299f + _lastSampledColor.g * 0.587f + _lastSampledColor.b * 0.114f;
+                    Color crosshairColor = brightness > 0.5f ? Color.black : Color.white;
+
+                    // Apply color
+                    _dot.color = crosshairColor;
+                }
+
+                // Wait for the sample interval before sampling again
+                yield return new WaitForSeconds(_sampleInterval);
             }
-        }
-
-        private void UpdateCrosshairColor()
-        {
-            if (_mainCamera == null || _dot == null) return;
-
-            // Sample center pixel
-            Color backgroundColor = SampleCenterPixel();
-
-            // Calculate contrasting color
-            float brightness = backgroundColor.r * 0.299f + backgroundColor.g * 0.587f + backgroundColor.b * 0.114f;
-            Color crosshairColor = brightness > 0.5f ? Color.black : Color.white;
-
-            // Apply color
-            _dot.color = crosshairColor;
-        }
-
-        private Color SampleCenterPixel()
-        {
-            // Render camera to small texture at screen center
-            RenderTexture currentRT = RenderTexture.active;
-            RenderTexture.active = _sampleTexture;
-
-            // Capture screen center
-            _mainCamera.targetTexture = _sampleTexture;
-            _mainCamera.Render();
-            _mainCamera.targetTexture = null;
-
-            // Read pixel
-            _readTexture.ReadPixels(new Rect(0, 0, 1, 1), 0, 0);
-            _readTexture.Apply();
-
-            RenderTexture.active = currentRT;
-
-            return _readTexture.GetPixel(0, 0);
         }
 
         private void OnDestroy()
         {
-            if (_sampleTexture != null)
-            {
-                _sampleTexture.Release();
-                Destroy(_sampleTexture);
-            }
-
             if (_readTexture != null)
             {
                 Destroy(_readTexture);

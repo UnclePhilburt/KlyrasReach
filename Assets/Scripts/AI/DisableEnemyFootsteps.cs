@@ -30,7 +30,6 @@ namespace KlyrasReach.AI
             if (footEffects != null)
             {
                 footEffects.enabled = false;
-                Debug.Log($"[DisableEnemyFootsteps] Disabled footsteps on {gameObject.name}");
             }
         }
     }

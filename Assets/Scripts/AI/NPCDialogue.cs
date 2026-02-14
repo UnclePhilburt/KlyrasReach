@@ -184,9 +184,16 @@ namespace KlyrasReach.AI
 
         /// <summary>
         /// Check if player is looking at NPC using raycast (same as NPCNameTag)
+        /// OPTIMIZED: Only raycast every 10 frames instead of every frame
         /// </summary>
         private void Update()
         {
+            // PERFORMANCE: Only check every 10 frames (massive performance gain!)
+            if (Time.frameCount % 10 != 0)
+            {
+                return;
+            }
+
             if (_mainCamera == null)
             {
                 _mainCamera = Camera.main;

@@ -52,12 +52,16 @@ namespace KlyrasReach.Systems
         private GameObject _parkedShip = null;
         private float _shipActivatedTime = 0f;
 
+        // Static variable to prevent multiple landing pads from triggering simultaneously
+        // PUBLIC so Outpost47LandingPad can also check/set it
+        public static bool _anyLandingInProgress = false;
+
         /// <summary>
         /// Check for nearby ships every frame
         /// </summary>
         private void Update()
         {
-            if (_isLanding) return;
+            if (_isLanding || _anyLandingInProgress) return;
 
             // Find active ship
             FindNearbyShip();
@@ -72,7 +76,7 @@ namespace KlyrasReach.Systems
                     // This prevents landing immediately on ship entry
                     if (Time.time - _shipActivatedTime > 0.5f)
                     {
-                        Debug.Log($"[StationLandingPad] Landing initiated");
+                        Debug.Log($"[StationLandingPad] Landing initiated at {gameObject.name}");
                         StartCoroutine(LandingSequence());
                     }
                     else
@@ -126,6 +130,13 @@ namespace KlyrasReach.Systems
         private System.Collections.IEnumerator LandingSequence()
         {
             _isLanding = true;
+            _anyLandingInProgress = true;
+
+            // CRITICAL: Set this flag to prevent PlayerSpawnPoint from spawning a player at wrong location
+            PlayerPrefs.SetInt("IsBoardingShip", 1);
+            PlayerPrefs.Save();
+
+            Debug.Log($"[StationLandingPad] Landing at {gameObject.name}, exit point: {(_useExitPointTransform && _playerExitPoint != null ? _playerExitPoint.name : "offset")}");
 
             // Exit the ship (deactivate ship controls)
             _shipController.ExitShip();
@@ -313,7 +324,12 @@ namespace KlyrasReach.Systems
 
             Debug.Log("[StationLandingPad] Ship parked");
 
+            // Clear the boarding flag now that landing is complete
+            PlayerPrefs.SetInt("IsBoardingShip", 0);
+            PlayerPrefs.Save();
+
             _isLanding = false;
+            _anyLandingInProgress = false;
         }
 
         /// <summary>

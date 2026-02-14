@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 64befd635912bb64796ca1fb3244e568, type: 2}
   m_LightingSettings: {fileID: 4890085278179872738, guid: 0c478ef2d4183e74a8a3695f21af7fd0, type: 2}
 --- !u!196 &4
 NavMeshSettings:
@@ -17473,6 +17473,7 @@ GameObject:
   m_Component:
   - component: {fileID: 385866440}
   - component: {fileID: 385866441}
+  - component: {fileID: 385866442}
   m_Layer: 0
   m_Name: Directional light (2)
   m_TagString: Untagged
@@ -17560,6 +17561,35 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!114 &385866442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 385866439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1001 &389649277
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26265,6 +26295,7 @@ GameObject:
   m_Component:
   - component: {fileID: 560122136}
   - component: {fileID: 560122135}
+  - component: {fileID: 560122137}
   m_Layer: 0
   m_Name: Point light (5)
   m_TagString: Untagged
@@ -26352,6 +26383,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1789047455}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &560122137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 560122134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1001 &561337225
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29320,6 +29380,7 @@ GameObject:
   m_Component:
   - component: {fileID: 610262050}
   - component: {fileID: 610262049}
+  - component: {fileID: 610262051}
   m_Layer: 0
   m_Name: Spotlight (4)
   m_TagString: Untagged
@@ -29407,6 +29468,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1789047455}
   m_LocalEulerAnglesHint: {x: 139.066, y: -73.267, z: -149.108}
+--- !u!114 &610262051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 610262048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1001 &610728395
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -39098,6 +39188,7 @@ GameObject:
   m_Component:
   - component: {fileID: 822156036}
   - component: {fileID: 822156037}
+  - component: {fileID: 822156038}
   m_Layer: 0
   m_Name: Directional light (1)
   m_TagString: Untagged
@@ -39185,6 +39276,35 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!114 &822156038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 822156035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1001 &822703325
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -52981,6 +53101,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1101899859}
   - component: {fileID: 1101899858}
+  - component: {fileID: 1101899860}
   m_Layer: 0
   m_Name: Spotlight (3)
   m_TagString: Untagged
@@ -53068,6 +53189,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1789047455}
   m_LocalEulerAnglesHint: {x: 150.258, y: 22.488998, z: -43.46997}
+--- !u!114 &1101899860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101899857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1001 &1103783092
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -57239,6 +57389,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1207176783}
   - component: {fileID: 1207176782}
+  - component: {fileID: 1207176784}
   m_Layer: 0
   m_Name: Spotlight
   m_TagString: Untagged
@@ -57326,6 +57477,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1789047455}
   m_LocalEulerAnglesHint: {x: 22.787, y: -150.60701, z: 61.036003}
+--- !u!114 &1207176784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1207176780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1001 &1208519893
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -69574,6 +69754,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1506569120}
   - component: {fileID: 1506569119}
+  - component: {fileID: 1506569121}
   m_Layer: 0
   m_Name: Point light (1)
   m_TagString: Untagged
@@ -69661,6 +69842,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1789047455}
   m_LocalEulerAnglesHint: {x: 0, y: -180.00002, z: 0}
+--- !u!114 &1506569121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1506569118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1001 &1507017744
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -72486,192 +72696,6 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 4562302644862752, guid: b770f68a2c268fe4f93264a83c3dc5f6, type: 3}
   m_PrefabInstance: {fileID: 1580656880}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &1582357166
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 2048405129}
-    m_Modifications:
-    - target: {fileID: 1367809683398226, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1408076656958492, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1921786008853628, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_Name
-      value: SkyDome
-      objectReference: {fileID: 0}
-    - target: {fileID: 1921786008853628, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4063447470365586, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.98168164
-      objectReference: {fileID: 0}
-    - target: {fileID: 4063447470365586, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.16640554
-      objectReference: {fileID: 0}
-    - target: {fileID: 4063447470365586, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.087096356
-      objectReference: {fileID: 0}
-    - target: {fileID: 4063447470365586, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.0320089
-      objectReference: {fileID: 0}
-    - target: {fileID: 4063447470365586, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 19.408
-      objectReference: {fileID: 0}
-    - target: {fileID: 4063447470365586, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 9.788
-      objectReference: {fileID: 0}
-    - target: {fileID: 4063447470365586, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -2.0570002
-      objectReference: {fileID: 0}
-    - target: {fileID: 4340414215852838, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 5.26112
-      objectReference: {fileID: 0}
-    - target: {fileID: 4340414215852838, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 5.261121
-      objectReference: {fileID: 0}
-    - target: {fileID: 4340414215852838, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 5.261121
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438692629600562, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438692629600562, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 5.3909383
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438692629600562, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 5.390936
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438692629600562, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 5.390936
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438692629600562, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438692629600562, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438692629600562, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438692629600562, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438692629600562, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438692629600562, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438692629600562, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4983120855197664, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: -0.618826
-      objectReference: {fileID: 0}
-    - target: {fileID: 4983120855197664, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.46221635
-      objectReference: {fileID: 0}
-    - target: {fileID: 4983120855197664, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.633907
-      objectReference: {fileID: 0}
-    - target: {fileID: 4983120855197664, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.03965204
-      objectReference: {fileID: 0}
-    - target: {fileID: 4983120855197664, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 38.487003
-      objectReference: {fileID: 0}
-    - target: {fileID: 4983120855197664, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 252.838
-      objectReference: {fileID: 0}
-    - target: {fileID: 4983120855197664, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -43.31
-      objectReference: {fileID: 0}
-    - target: {fileID: 4991252090195626, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.25841716
-      objectReference: {fileID: 0}
-    - target: {fileID: 4991252090195626, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.8145682
-      objectReference: {fileID: 0}
-    - target: {fileID: 4991252090195626, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.4848406
-      objectReference: {fileID: 0}
-    - target: {fileID: 4991252090195626, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0.18608814
-      objectReference: {fileID: 0}
-    - target: {fileID: 4991252090195626, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 13.919001
-      objectReference: {fileID: 0}
-    - target: {fileID: 4991252090195626, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 145.21501
-      objectReference: {fileID: 0}
-    - target: {fileID: 4991252090195626, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 114.09701
-      objectReference: {fileID: 0}
-    - target: {fileID: 23400579093751994, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: c5635ee9290e46545ac8bcef1b979cfb, type: 2}
-    - target: {fileID: 23416067461999834, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: f9640228e65e34a4ab162949048322b1, type: 2}
-    - target: {fileID: 23519750191583402, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: c5635ee9290e46545ac8bcef1b979cfb, type: 2}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
---- !u!4 &1582357167 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4438692629600562, guid: a79ec8b373198d74f9ea6d1eaa4ec7f3, type: 3}
-  m_PrefabInstance: {fileID: 1582357166}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1582927552
 PrefabInstance:
@@ -76261,6 +76285,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1662574243}
   - component: {fileID: 1662574242}
+  - component: {fileID: 1662574244}
   m_Layer: 0
   m_Name: Spotlight (5)
   m_TagString: Untagged
@@ -76348,6 +76373,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1789047455}
   m_LocalEulerAnglesHint: {x: 139.066, y: 14.400986, z: -149.108}
+--- !u!114 &1662574244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1662574241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1001 &1663547896
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -83773,6 +83827,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1853778162}
   - component: {fileID: 1853778161}
+  - component: {fileID: 1853778163}
   m_Layer: 0
   m_Name: Point light
   m_TagString: Untagged
@@ -83860,6 +83915,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1789047455}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1853778163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853778160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1001 &1854152676
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -86862,6 +86946,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1925342986}
   - component: {fileID: 1925342985}
+  - component: {fileID: 1925342987}
   m_Layer: 0
   m_Name: Point light (2)
   m_TagString: Untagged
@@ -86949,6 +87034,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1789047455}
   m_LocalEulerAnglesHint: {x: 0, y: -180.00002, z: 0}
+--- !u!114 &1925342987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1925342984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1001 &1925406987
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -89645,6 +89759,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1978230227}
   - component: {fileID: 1978230226}
+  - component: {fileID: 1978230228}
   m_Layer: 0
   m_Name: Spotlight (6)
   m_TagString: Untagged
@@ -89732,6 +89847,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1789047455}
   m_LocalEulerAnglesHint: {x: 145.46399, y: -37.985992, z: -182.213}
+--- !u!114 &1978230228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1978230225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1001 &1978832187
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -92835,7 +92979,6 @@ Transform:
   m_Children:
   - {fileID: 117011694}
   - {fileID: 1275262903}
-  - {fileID: 1582357167}
   - {fileID: 2143153812}
   - {fileID: 2128615835}
   - {fileID: 2118596479}
@@ -97224,6 +97367,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2144635482}
   - component: {fileID: 2144635481}
+  - component: {fileID: 2144635483}
   m_Layer: 0
   m_Name: Spotlight (2)
   m_TagString: Untagged
@@ -97311,6 +97455,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1789047455}
   m_LocalEulerAnglesHint: {x: 150.258, y: 22.488998, z: -43.46997}
+--- !u!114 &2144635483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2144635480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

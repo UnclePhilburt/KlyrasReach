@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "CharacterInput",
     "maps": [
         {
@@ -126,7 +127,7 @@
                     "name": "Action",
                     "type": "Button",
                     "id": "6f3b3740-4829-4925-aa23-b5e6844041e7",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -333,6 +334,15 @@
                     "name": "OnScreenFire",
                     "type": "Button",
                     "id": "a35290ce-87fd-4cf8-95b7-a42dadd6e5bf",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Teleport",
+                    "type": "Button",
+                    "id": "765b57a8-8201-4ecb-8147-267f9294aa96",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -772,7 +782,7 @@
                 {
                     "name": "",
                     "id": "db143643-6d82-450c-be04-b33673c1b8b8",
-                    "path": "<Keyboard>/space",
+                    "path": "<Keyboard>/leftAlt",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
@@ -1316,6 +1326,28 @@
                     "processors": "",
                     "groups": "Keyboard;Gamepad",
                     "action": "OnScreenFire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c8f953c0-9640-40fb-8499-ca7b3674547d",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Teleport",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c9b78cc9-6f74-4b06-8329-3a65503d41dc",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Teleport",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -20,6 +20,9 @@ namespace KlyrasReach.AI
     /// </summary>
     public class SimpleHealthBar : MonoBehaviour
     {
+        // PERFORMANCE: Shared sprite for all health bars (huge memory saving!)
+        private static Sprite _sharedBoxSprite;
+
         [Header("Settings")]
         [Tooltip("How high above the character")]
         [SerializeField] private float _heightOffset = 2f;
@@ -39,6 +42,15 @@ namespace KlyrasReach.AI
         [Tooltip("Only show when damaged?")]
         [SerializeField] private bool _hideWhenFull = true;
 
+        [Tooltip("Update rate based on distance (far enemies update less)")]
+        [SerializeField] private bool _useDistanceLOD = true;
+
+        [Tooltip("Max distance to show health bar")]
+        [SerializeField] private float _maxVisibleDistance = 15f; // Reduced for performance
+
+        [Tooltip("Disable health bars entirely for performance?")]
+        [SerializeField] private bool _disableHealthBars = false;
+
         // Private variables
         private Camera _mainCamera;
         private GameObject _barObject;
@@ -47,9 +59,28 @@ namespace KlyrasReach.AI
         private Opsive.UltimateCharacterController.Traits.AttributeManager _attributeManager;
         private Opsive.UltimateCharacterController.Traits.Attribute _healthAttribute;
 
+        // Performance optimization
+        private float _lastHealthValue = -1f;
+        private int _updateFrameOffset;
+        private Transform _cameraTransform;
+
         private void Start()
         {
+            // If disabled, don't create health bars at all
+            if (_disableHealthBars)
+            {
+                enabled = false;
+                return;
+            }
+
             _mainCamera = Camera.main;
+            if (_mainCamera != null)
+            {
+                _cameraTransform = _mainCamera.transform;
+            }
+
+            // Stagger updates across frames
+            _updateFrameOffset = Random.Range(0, 10);
 
             // Get health attribute
             _attributeManager = GetComponent<Opsive.UltimateCharacterController.Traits.AttributeManager>();
@@ -57,6 +88,8 @@ namespace KlyrasReach.AI
 
             _healthAttribute = _attributeManager.GetAttribute("Health");
             if (_healthAttribute == null) return;
+
+            _lastHealthValue = _healthAttribute.Value;
 
             CreateHealthBar();
         }
@@ -96,41 +129,102 @@ namespace KlyrasReach.AI
 
         private void LateUpdate()
         {
-            if (_barObject == null || _healthAttribute == null || _mainCamera == null) return;
+            if (_barObject == null || _healthAttribute == null || _cameraTransform == null) return;
 
-            // Face camera
-            _barObject.transform.rotation = Quaternion.LookRotation(_barObject.transform.position - _mainCamera.transform.position);
-
-            // Update fill
-            float healthPercent = _healthAttribute.Value / _healthAttribute.MaxValue;
-
-            // Update fill scale (shrink from right side)
-            Vector3 fillScale = _fillRenderer.transform.localScale;
-            fillScale.x = _worldWidth * healthPercent;
-            _fillRenderer.transform.localScale = fillScale;
-
-            // Reposition fill to stay left-aligned
-            Vector3 fillPos = _fillRenderer.transform.localPosition;
-            fillPos.x = -(_worldWidth - fillScale.x) / 2f;
-            _fillRenderer.transform.localPosition = fillPos;
-
-            // Show/hide logic
-            if (_hideWhenFull)
+            // Distance-based LOD: Hide health bars for very distant enemies
+            if (_useDistanceLOD)
             {
-                bool shouldShow = healthPercent < 1f && _healthAttribute.Value > 0;
-                if (_barObject.activeSelf != shouldShow)
+                float sqrDistToCamera = (_barObject.transform.position - _cameraTransform.position).sqrMagnitude;
+
+                // Hide if too far
+                if (sqrDistToCamera > _maxVisibleDistance * _maxVisibleDistance)
                 {
-                    _barObject.SetActive(shouldShow);
+                    if (_barObject.activeSelf)
+                    {
+                        _barObject.SetActive(false);
+                    }
+                    return;
+                }
+
+                // Stagger updates for distant health bars
+                if (sqrDistToCamera > 20f * 20f) // 20 units
+                {
+                    // Update every 10 frames
+                    if ((Time.frameCount + _updateFrameOffset) % 10 != 0)
+                    {
+                        return;
+                    }
+                }
+                else if (sqrDistToCamera > 10f * 10f) // 10 units
+                {
+                    // Update every 5 frames
+                    if ((Time.frameCount + _updateFrameOffset) % 5 != 0)
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    // Even close health bars only update every 3 frames (huge performance gain)
+                    if ((Time.frameCount + _updateFrameOffset) % 3 != 0)
+                    {
+                        return;
+                    }
+                }
+            }
+
+            float currentHealth = _healthAttribute.Value;
+            bool healthChanged = Mathf.Abs(currentHealth - _lastHealthValue) > 0.01f;
+
+            // Face camera (only very occasionally - expensive operation!)
+            // Quaternion.LookRotation is VERY expensive with many enemies
+            if ((Time.frameCount + _updateFrameOffset) % 60 == 0) // Only every 60 frames (~1 second)
+            {
+                _barObject.transform.rotation = Quaternion.LookRotation(
+                    _barObject.transform.position - _cameraTransform.position);
+            }
+
+            // Only update fill if health changed
+            if (healthChanged)
+            {
+                _lastHealthValue = currentHealth;
+
+                float healthPercent = currentHealth / _healthAttribute.MaxValue;
+
+                // Update fill scale (shrink from right side)
+                Vector3 fillScale = _fillRenderer.transform.localScale;
+                fillScale.x = _worldWidth * healthPercent;
+                _fillRenderer.transform.localScale = fillScale;
+
+                // Reposition fill to stay left-aligned
+                Vector3 fillPos = _fillRenderer.transform.localPosition;
+                fillPos.x = -(_worldWidth - fillScale.x) / 2f;
+                _fillRenderer.transform.localPosition = fillPos;
+
+                // Show/hide logic
+                if (_hideWhenFull)
+                {
+                    bool shouldShow = healthPercent < 1f && currentHealth > 0;
+                    if (_barObject.activeSelf != shouldShow)
+                    {
+                        _barObject.SetActive(shouldShow);
+                    }
                 }
             }
         }
 
         private Sprite CreateBoxSprite()
         {
-            Texture2D texture = new Texture2D(1, 1);
-            texture.SetPixel(0, 0, Color.white);
-            texture.Apply();
-            return Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
+            // PERFORMANCE: Create sprite only once and share it across all health bars
+            // This saves 200 texture allocations with 100 enemies!
+            if (_sharedBoxSprite == null)
+            {
+                Texture2D texture = new Texture2D(1, 1);
+                texture.SetPixel(0, 0, Color.white);
+                texture.Apply();
+                _sharedBoxSprite = Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
+            }
+            return _sharedBoxSprite;
         }
 
         private void OnDestroy()

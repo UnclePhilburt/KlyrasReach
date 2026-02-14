@@ -78,21 +78,10 @@ namespace KlyrasReach.AI
             {
                 _displayName = _aiController.GetCharacterName();
                 _displayRole = _aiController.GetCharacterRole();
-                Debug.Log($"[NPCNameTag] Got name from CharacterAIController: '{_displayName}' ({_displayRole})");
             }
-            else
-            {
-                Debug.LogWarning($"[NPCNameTag] No CharacterAIController found on '{gameObject.name}'! Using default name.");
-            }
-
-            // Note: We don't actually need to find the player object anymore!
-            // We use camera position directly in Update()
-            Debug.Log($"[NPCNameTag] '{_displayName}' will use camera position as player location");
 
             // Try to find head bone for better positioning
             FindHeadBone();
-
-            Debug.Log($"[NPCNameTag] '{_displayName}' fully initialized. ShowNameTag will appear when player looks at NPC within {_maxDisplayDistance}m");
         }
 
         /// <summary>
@@ -108,7 +97,6 @@ namespace KlyrasReach.AI
                 if (boneName.Contains("head") || boneName.Contains("neck"))
                 {
                     _headTransform = t;
-                    Debug.Log($"[NPCNameTag] Found head bone: {t.name}");
                     return;
                 }
             }
@@ -119,9 +107,16 @@ namespace KlyrasReach.AI
 
         /// <summary>
         /// Check if player is looking at this NPC using raycast
+        /// OPTIMIZED: Only raycast every 10 frames instead of every frame
         /// </summary>
         private void Update()
         {
+            // PERFORMANCE: Only check every 10 frames (massive performance gain!)
+            if (Time.frameCount % 10 != 0)
+            {
+                return;
+            }
+
             if (_mainCamera == null)
             {
                 // Try to find camera again
@@ -158,19 +153,11 @@ namespace KlyrasReach.AI
                 if (hitThisNPC)
                 {
                     // Player is looking directly at this NPC!
-                    if (!_isPlayerLookingAt && _debugMode)
-                    {
-                        Debug.Log($"[NPCNameTag] '{_displayName}' NOW VISIBLE - raycast hit at distance: {hit.distance:F2}m");
-                    }
                     _isPlayerLookingAt = true;
                 }
                 else
                 {
                     // Raycast hit something else
-                    if (_isPlayerLookingAt && _debugMode)
-                    {
-                        Debug.Log($"[NPCNameTag] '{_displayName}' no longer visible - raycast hit: {hit.collider.gameObject.name}");
-                    }
                     _isPlayerLookingAt = false;
                 }
             }
@@ -197,11 +184,6 @@ namespace KlyrasReach.AI
 
             // Convert to screen position
             Vector3 screenPos = _mainCamera.WorldToScreenPoint(worldPosition);
-
-            if (_debugMode && Event.current.type == EventType.Repaint && Time.frameCount % 60 == 0)
-            {
-                Debug.Log($"[NPCNameTag] '{_displayName}' screen pos: {screenPos}, z: {screenPos.z}");
-            }
 
             // Only draw if in front of camera
             if (screenPos.z > 0)

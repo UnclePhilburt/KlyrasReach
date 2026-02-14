@@ -73,6 +73,12 @@ namespace KlyrasReach.AI
         [Tooltip("Size of object pool (should be >= maxAliveAtOnce)")]
         [SerializeField] private int _poolSize = 100;
 
+        [Tooltip("How many enemies to initialize per frame? (Higher = faster loading but more lag)")]
+        [SerializeField] private int _poolInitBatchSize = 5;
+
+        [Tooltip("How many frames to wait between batches? (0 = every frame, 1 = every other frame)")]
+        [SerializeField] private int _poolInitFrameDelay = 0;
+
         [Header("Debug")]
         [Tooltip("Show debug messages?")]
         [SerializeField] private bool _debugMode = true;
@@ -126,11 +132,6 @@ namespace KlyrasReach.AI
 
             // Set first reinforcement spawn time
             _nextSpawnTime = Time.time + Random.Range(_minSpawnInterval, _maxSpawnInterval);
-
-            if (_debugMode)
-            {
-                Debug.Log($"[RavagerSpawner] '{gameObject.name}' initialized. Initial count: {_initialSpawnCount}, Max alive: {_maxAliveAtOnce}, Pooling: {_useObjectPooling}");
-            }
         }
 
         /// <summary>
@@ -150,37 +151,54 @@ namespace KlyrasReach.AI
                 GameObject ravager = Instantiate(_ravagerPrefab, _poolContainer);
                 ravager.name = $"Ravager_Pooled_{i}";
 
-                // Enable briefly to force initialization (Start/Awake), then disable
-                ravager.SetActive(true);
+                // Start inactive - will be initialized gradually over time
+                ravager.SetActive(false);
                 _objectPool.Add(ravager);
             }
 
-            // Wait one frame, then disable all pooled enemies
-            StartCoroutine(DisablePoolAfterInitialization());
-
-            if (_debugMode)
-            {
-                Debug.Log($"[RavagerSpawner] Created object pool with {_poolSize} Ravagers (pre-initialized during loading)");
-            }
+            // Initialize pool gradually over multiple frames to avoid lag spike
+            StartCoroutine(InitializePoolGradually());
         }
 
-        /// <summary>
-        /// Disable all pooled enemies after they've initialized
-        /// </summary>
-        private System.Collections.IEnumerator DisablePoolAfterInitialization()
-        {
-            // Wait for all Start() methods to complete
-            yield return new WaitForEndOfFrame();
 
-            // Now disable all pooled enemies
-            foreach (GameObject ravager in _objectPool)
+        /// <summary>
+        /// Initialize pool gradually - activate enemies in small batches over time
+        /// This spreads the initialization cost across multiple frames
+        /// Batch size and delay are configurable in Inspector
+        /// </summary>
+        private System.Collections.IEnumerator InitializePoolGradually()
+        {
+            int batchSize = Mathf.Max(1, _poolInitBatchSize); // Ensure at least 1 per batch
+
+            for (int i = 0; i < _objectPool.Count; i += batchSize)
             {
-                ravager.SetActive(false);
+                // Activate a batch of enemies
+                for (int j = i; j < Mathf.Min(i + batchSize, _objectPool.Count); j++)
+                {
+                    GameObject ravager = _objectPool[j];
+                    ravager.SetActive(true);
+                }
+
+                // Wait one frame for their Start() methods to run
+                yield return null;
+
+                // Deactivate the batch
+                for (int j = i; j < Mathf.Min(i + batchSize, _objectPool.Count); j++)
+                {
+                    GameObject ravager = _objectPool[j];
+                    ravager.SetActive(false);
+                }
+
+                // Wait additional frames if configured
+                for (int k = 0; k < _poolInitFrameDelay; k++)
+                {
+                    yield return null;
+                }
             }
 
             if (_debugMode)
             {
-                Debug.Log($"[RavagerSpawner] Pool initialized and disabled. Ready for gameplay!");
+                UnityEngine.Debug.Log($"[RavagerSpawner] Pool of {_poolSize} enemies initialized (batch size: {batchSize}, frame delay: {_poolInitFrameDelay})");
             }
         }
 
@@ -235,11 +253,6 @@ namespace KlyrasReach.AI
             }
 
             _hasSpawnedInitial = true;
-
-            if (_debugMode)
-            {
-                Debug.Log($"[RavagerSpawner] Spawned {spawnCount} initial Ravagers at '{gameObject.name}'");
-            }
         }
 
         /// <summary>
@@ -265,12 +278,6 @@ namespace KlyrasReach.AI
                 Transform spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
                 SpawnRavagerAtPoint(spawnPoint);
             }
-
-            if (_debugMode)
-            {
-                string type = isHorde ? "HORDE" : "reinforcement";
-                Debug.Log($"[RavagerSpawner] Spawned {spawnCount} Ravager {type} at '{gameObject.name}'. Total alive: {_spawnedRavagers.Count}");
-            }
         }
 
         /// <summary>
@@ -289,10 +296,6 @@ namespace KlyrasReach.AI
                 ravager = GetFromPool();
                 if (ravager == null)
                 {
-                    if (_debugMode)
-                    {
-                        Debug.LogWarning($"[RavagerSpawner] Object pool exhausted! Increase pool size.");
-                    }
                     return;
                 }
             }
@@ -354,11 +357,6 @@ namespace KlyrasReach.AI
             {
                 Transform spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
                 SpawnRavagerAtPoint(spawnPoint);
-            }
-
-            if (_debugMode)
-            {
-                Debug.Log($"[RavagerSpawner] Manually spawned horde of {spawnCount} Ravagers!");
             }
         }
 

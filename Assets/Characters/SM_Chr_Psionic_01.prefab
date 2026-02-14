@@ -363,6 +363,7 @@ MonoBehaviour:
   - rid: 9210372769278066754
   - rid: 9210372769278066755
   - rid: 9210372769278066756
+  - rid: 9210372796781953156
   m_ItemAbilities:
   - rid: 9210372769278066757
   - rid: 9210372769278066758
@@ -1306,6 +1307,69 @@ MonoBehaviour:
         m_StopSpeedChange: 1
         m_ActivateInFirstPerson: 1
         m_RotateTowardsLookSourceTarget: 1
+    - rid: 9210372796781953156
+      type: {class: FlashTeleport, ns: KlyrasReach.Player, asm: Assembly-CSharp}
+      data:
+        m_States:
+        - m_Name: Default
+          m_Preset: {fileID: 0}
+          m_BlockList: []
+          m_Default: 1
+        m_Enabled: 1
+        m_StartType: 2
+        m_StopType: 0
+        m_InputNames:
+        - Teleport
+        m_WaitForDoublePressTapTimeout: 0
+        m_LongPressDuration: 0.5
+        m_WaitForLongPressRelease: 0
+        m_AbilityStarter:
+          rid: -2
+        m_AbilityStopper:
+          rid: -2
+        m_AttributeModifier:
+          m_AttributeName: 
+          m_Amount: 0
+          m_AutoUpdate: 0
+          m_AutoUpdateStartDelay: 1
+          m_AutoUpdateInterval: 0.1
+          m_AutoUpdateDuration: -1
+        m_State: 
+        m_StateAppendItemIdentifierName: 0
+        m_AbilityIndexParameter: -1
+        m_StartAudioClipSet:
+          m_AudioConfig: {fileID: 11400000, guid: 5f1b36f32f34d954bba6a4f8a4e66073, type: 2}
+          m_AudioClips:
+          - {fileID: 8300000, guid: e985c3eb16c6ebf4880ef56c9066db4a, type: 3}
+        m_StopAudioClipSet:
+          m_AudioConfig: {fileID: 11400000, guid: 5f1b36f32f34d954bba6a4f8a4e66073, type: 2}
+          m_AudioClips:
+          - {fileID: 8300000, guid: e985c3eb16c6ebf4880ef56c9066db4a, type: 3}
+        m_AllowPositionalInput: 1
+        m_AllowRotationalInput: 1
+        m_UseGravity: 0
+        m_UseRootMotionPosition: 0
+        m_UseRootMotionRotation: 0
+        m_DetectHorizontalCollisions: 0
+        m_DetectVerticalCollisions: 0
+        m_DetectGroundCollisions: 0
+        m_AnimatorMotion: {fileID: 0}
+        m_StartEffectName: Opsive.UltimateCharacterController.Character.Effects.PlayAudioClip
+        m_StartEffectIndex: -1
+        m_AllowEquippedSlotsMask: -1
+        m_AllowItemDefinitions: []
+        m_ImmediateUnequip: 0
+        m_ReequipSlots: 1
+        m_AbilityMessageText: 
+        m_AbilityMessageIcon: {fileID: 0}
+        m_InspectorDescription: 
+        _teleportDistance: 8
+        _teleportDuration: 0.3
+        _cooldown: 2
+        _invulnerableDuringTeleport: 1
+        _teleportOutEffectPrefab: {fileID: 1586826114847994, guid: 2b0d7f8f779c4ed4b96621647861c04c, type: 3}
+        _teleportInEffectPrefab: {fileID: 1586826114847994, guid: 2b0d7f8f779c4ed4b96621647861c04c, type: 3}
+        _extraSparkleEffect: {fileID: 1676552689947574, guid: 8e4cbc8e0818db845af7dbcd20fe4ad0, type: 3}
 --- !u!114 &3277950863577627818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1353,7 +1417,7 @@ MonoBehaviour:
   m_AutoSpawnDestroyRuntimeCharacterItems: 1
   m_AutoRemoveCharacterItems: 1
   m_UnequipAllOnDeath: 0
-  m_LoadDefaultLoadoutOnRespawn: 0
+  m_LoadDefaultLoadoutOnRespawn: 1
   m_UnequippedStateName: Unequipped
   m_PreventPickupIfDisabled: 0
   m_DropPrefab: {fileID: 0}
@@ -1384,7 +1448,13 @@ MonoBehaviour:
     m_Option: 1
     m_ItemSetName: 
     m_Index: 0
-  m_DefaultLoadout: []
+  m_DefaultLoadout:
+  - ItemDefinition: {fileID: 114334400771614146, guid: 5481010ef14c32f4cb7b6661b0c59fb4, type: 2}
+    Amount: 1
+  - ItemDefinition: {fileID: 114399628520483710, guid: 5481010ef14c32f4cb7b6661b0c59fb4, type: 2}
+    Amount: 100000
+  - ItemDefinition: {fileID: 2119731153351413781, guid: 5481010ef14c32f4cb7b6661b0c59fb4, type: 2}
+    Amount: 100000
   m_RemoveExceptions: []
 --- !u!114 &9221274185223073422
 MonoBehaviour:
@@ -2195,7 +2265,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 137721037109083136, guid: 152d802e7e68dc849af7a6f4afb2cbf4, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2441,7 +2511,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.4
+  m_Volume: 0.15
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -2644,7 +2714,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.4
+  m_Volume: 0.15
   m_Pitch: 1
   Loop: 0
   Mute: 0

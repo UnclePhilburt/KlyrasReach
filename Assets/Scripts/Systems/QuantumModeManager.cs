@@ -108,9 +108,17 @@ namespace KlyrasReach.Systems
 
         /// <summary>
         /// Checks if player is currently piloting a ship
+        /// OPTIMIZED: Only checks every 30 frames instead of every frame
         /// </summary>
         private void CheckIfInShip()
         {
+            // PERFORMANCE: Only check every 30 frames (0.5 seconds at 60FPS)
+            // FindGameObjectsWithTag is EXTREMELY expensive!
+            if (Time.frameCount % 30 != 0)
+            {
+                return;
+            }
+
             GameObject[] ships = GameObject.FindGameObjectsWithTag(_shipTag);
 
             _playerInShip = false;
