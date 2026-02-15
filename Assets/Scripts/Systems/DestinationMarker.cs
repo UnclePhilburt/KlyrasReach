@@ -174,22 +174,29 @@ namespace KlyrasReach.Systems
             Keyboard keyboard = Keyboard.current;
             if (keyboard != null && keyboard.vKey.wasPressedThisFrame)
             {
-                Debug.Log($"[DestinationMarker] V pressed - _isMouseOver: {_isMouseOver}, QuantumMode: {QuantumModeManager.IsQuantumModeActive}, HasShip: {_playerShipTransform != null}");
+                Debug.Log($"[DestinationMarker '{_destinationName}'] ========== V KEY PRESSED ==========");
+                Debug.Log($"[DestinationMarker '{_destinationName}'] _isMouseOver: {_isMouseOver}");
+                Debug.Log($"[DestinationMarker '{_destinationName}'] QuantumMode: {QuantumModeManager.IsQuantumModeActive}");
+                Debug.Log($"[DestinationMarker '{_destinationName}'] HasShip: {_playerShipTransform != null}");
+                Debug.Log($"[DestinationMarker '{_destinationName}'] All conditions met: {_isMouseOver && QuantumModeManager.IsQuantumModeActive && _playerShipTransform != null}");
             }
 
             if (_isMouseOver && keyboard != null && keyboard.vKey.wasPressedThisFrame && QuantumModeManager.IsQuantumModeActive && _playerShipTransform != null)
             {
+                Debug.Log($"[DestinationMarker '{_destinationName}'] Checking ship controller...");
+
                 // Double check that ship is actually being piloted
                 var controller = _playerShipTransform.GetComponent<Player.ShipController>();
-                Debug.Log($"[DestinationMarker] Ship controller found: {controller != null}, IsActive: {controller?.IsActive}");
+                Debug.Log($"[DestinationMarker '{_destinationName}'] Ship controller found: {controller != null}, IsActive: {controller?.IsActive}");
 
                 if (controller != null && controller.IsActive)
                 {
+                    Debug.Log($"[DestinationMarker '{_destinationName}'] ✓ All checks passed - calling InitiateQuantumTravel()");
                     InitiateQuantumTravel();
                 }
                 else
                 {
-                    Debug.LogWarning("[DestinationMarker] Ship controller not active - cannot quantum travel");
+                    Debug.LogWarning($"[DestinationMarker '{_destinationName}'] Ship controller not active - cannot quantum travel");
                 }
             }
         }
@@ -305,6 +312,7 @@ namespace KlyrasReach.Systems
             // Only show if player is in ship and in range
             if (!_playerInShip || _mainCamera == null || _playerShipTransform == null)
             {
+                Debug.Log($"[DestinationMarker '{_destinationName}'] Not showing - PlayerInShip: {_playerInShip}, HasCamera: {_mainCamera != null}, HasShip: {_playerShipTransform != null}");
                 return;
             }
 
@@ -314,6 +322,7 @@ namespace KlyrasReach.Systems
             // Don't show quantum travel option if too close (prevents UI clutter)
             if (distance < _minQuantumDistance)
             {
+                Debug.Log($"[DestinationMarker '{_destinationName}'] Too close - Distance: {distance}, Min: {_minQuantumDistance}");
                 return;
             }
 
@@ -332,6 +341,8 @@ namespace KlyrasReach.Systems
                     return; // Not looking at it
                 }
 
+                Debug.Log($"[DestinationMarker '{_destinationName}'] VISIBLE - Distance: {distance:F0}m, Angle: {angle:F1}°");
+
                 // Draw marker box
                 float halfSize = _markerSize / 2f;
                 Rect markerRect = new Rect(
@@ -346,6 +357,8 @@ namespace KlyrasReach.Systems
                 Vector2 markerCenter = new Vector2(screenPos.x, Screen.height - screenPos.y);
                 float distanceFromCenter = Vector2.Distance(screenCenter, markerCenter);
                 _isMouseOver = distanceFromCenter < 100f; // Within 100 pixels of center
+
+                Debug.Log($"[DestinationMarker '{_destinationName}'] DistanceFromCenter: {distanceFromCenter:F0}px, IsMouseOver: {_isMouseOver}");
 
                 // Set marker color (highlight if looking at it)
                 GUI.color = _isMouseOver ? Color.white : _markerColor;

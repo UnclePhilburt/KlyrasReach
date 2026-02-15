@@ -59,7 +59,7 @@ namespace KlyrasReach.Systems
         private Vector3 _rightDoorOpenPosition;
 
         private bool _isOpen = false;
-        private Transform _playerTransform;
+        private GameObject[] _allPlayers; // Track all players
         private AudioSource _audioSource;
         private Vector3 _detectionPoint; // Fixed position for distance checks
 
@@ -90,17 +90,7 @@ namespace KlyrasReach.Systems
                 _rightDoorOpenPosition = _rightDoorClosedPosition + (-_slideDirection.normalized * _slideDistance);
             }
 
-            // Find the player
-            GameObject playerObject = GameObject.FindGameObjectWithTag(_playerTag);
-            if (playerObject != null)
-            {
-                _playerTransform = playerObject.transform;
-                Debug.Log($"[ProximitySlidingDoor] Found player: {playerObject.name}");
-            }
-            else
-            {
-                Debug.LogError($"[ProximitySlidingDoor] Could not find player with tag '{_playerTag}'!");
-            }
+            // Players will be found each frame in Update() to handle multiplayer spawning
 
             // Setup audio
             if (_openSound != null || _closeSound != null)
@@ -119,27 +109,35 @@ namespace KlyrasReach.Systems
         /// </summary>
         private void Update()
         {
-            // If we don't have a player reference, try to find one
-            if (_playerTransform == null)
+            // Find ALL players with the tag (handles multiplayer)
+            _allPlayers = GameObject.FindGameObjectsWithTag(_playerTag);
+
+            if (_allPlayers == null || _allPlayers.Length == 0)
             {
-                GameObject playerObject = GameObject.FindGameObjectWithTag(_playerTag);
-                if (playerObject != null)
-                {
-                    _playerTransform = playerObject.transform;
-                    Debug.Log($"[ProximitySlidingDoor] Found player: {playerObject.name}");
-                }
-                else
-                {
-                    return; // Still no player, wait for next frame
-                }
+                return; // No players in scene yet
             }
 
-            // Calculate distance between door's ORIGINAL position and player
-            // This prevents doors from leaving their own detection range when they slide
-            float distanceToPlayer = Vector3.Distance(_detectionPoint, _playerTransform.position);
+            // Check distance to ALL players, open if ANY player is in range
+            bool playerInRange = false;
+            float closestDistance = float.MaxValue;
 
-            // Determine if player is in range
-            bool playerInRange = distanceToPlayer <= _detectionRange;
+            foreach (GameObject player in _allPlayers)
+            {
+                if (player == null) continue;
+
+                float distanceToPlayer = Vector3.Distance(_detectionPoint, player.transform.position);
+
+                if (distanceToPlayer < closestDistance)
+                {
+                    closestDistance = distanceToPlayer;
+                }
+
+                if (distanceToPlayer <= _detectionRange)
+                {
+                    playerInRange = true;
+                    // Don't break - we want to keep checking in case we need the closest distance
+                }
+            }
 
             // Determine target positions based on whether door should be open
             Vector3 leftTarget = playerInRange ? _leftDoorOpenPosition : _leftDoorClosedPosition;

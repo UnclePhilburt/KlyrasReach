@@ -39,8 +39,8 @@ namespace KlyrasReach.Player
 
         // Private references
         private ShipController _shipController;
-        private Transform _playerTransform;
-        private GameObject _playerObject;
+        private Transform _closestPlayerTransform;
+        private GameObject _closestPlayerObject;
         private Camera _mainCamera;
         private bool _playerInRange = false;
         private bool _playerIsPiloting = false;
@@ -78,18 +78,17 @@ namespace KlyrasReach.Player
         /// </summary>
         private void Update()
         {
-            // Try to find player if we don't have a reference yet OR if player object was destroyed
-            if (_playerTransform == null || _playerObject == null)
+            // Find closest player each frame (handles multiplayer)
+            FindClosestPlayer();
+
+            if (_closestPlayerTransform == null)
             {
-                FindPlayer();
-                if (_playerTransform == null)
-                {
-                    return;
-                }
+                _playerInRange = false;
+                return;
             }
 
-            // Check if player is in range
-            float distance = Vector3.Distance(transform.position, _playerTransform.position);
+            // Check if closest player is in range
+            float distance = Vector3.Distance(transform.position, _closestPlayerTransform.position);
             _playerInRange = distance <= _entryRange;
 
             // Handle interaction input (F key using new Input System)
@@ -116,16 +115,39 @@ namespace KlyrasReach.Player
         }
 
         /// <summary>
-        /// Tries to find the player in the scene
+        /// Finds the closest player to the ship (handles multiplayer)
         /// </summary>
-        private void FindPlayer()
+        private void FindClosestPlayer()
         {
-            GameObject player = GameObject.FindGameObjectWithTag(_playerTag);
-            if (player != null)
+            GameObject[] allPlayers = GameObject.FindGameObjectsWithTag(_playerTag);
+
+            if (allPlayers == null || allPlayers.Length == 0)
             {
-                _playerObject = player;
-                _playerTransform = player.transform;
-                Debug.Log($"[ShipEntryPoint] Found and locked onto player: {player.name}");
+                _closestPlayerObject = null;
+                _closestPlayerTransform = null;
+                return;
+            }
+
+            // Find closest player
+            GameObject closestPlayer = null;
+            float closestDistance = float.MaxValue;
+
+            foreach (GameObject player in allPlayers)
+            {
+                if (player == null) continue;
+
+                float distance = Vector3.Distance(transform.position, player.transform.position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestPlayer = player;
+                }
+            }
+
+            if (closestPlayer != null)
+            {
+                _closestPlayerObject = closestPlayer;
+                _closestPlayerTransform = closestPlayer.transform;
             }
         }
 
@@ -134,12 +156,12 @@ namespace KlyrasReach.Player
         /// </summary>
         private void EnterShip()
         {
-            if (_playerObject == null || _shipController == null)
+            if (_closestPlayerObject == null || _shipController == null)
             {
                 return;
             }
 
-            Debug.Log($"[ShipEntryPoint] Player entering ship '{gameObject.name}'");
+            Debug.Log($"[ShipEntryPoint] Player '{_closestPlayerObject.name}' entering ship '{gameObject.name}'");
 
             // Disable player character controller
             DisablePlayerController();
@@ -173,19 +195,19 @@ namespace KlyrasReach.Player
         /// </summary>
         private void ExitShip()
         {
-            if (_playerObject == null || _shipController == null)
+            if (_closestPlayerObject == null || _shipController == null)
             {
                 return;
             }
 
-            Debug.Log($"[ShipEntryPoint] Player exiting ship '{gameObject.name}'");
+            Debug.Log($"[ShipEntryPoint] Player '{_closestPlayerObject.name}' exiting ship '{gameObject.name}'");
 
             // Deactivate ship controls
             _shipController.ExitShip();
 
             // Position player at exit point
             Vector3 exitPosition = transform.position + transform.TransformDirection(_exitOffset);
-            _playerTransform.position = exitPosition;
+            _closestPlayerTransform.position = exitPosition;
 
             // Show player model
             SetPlayerVisibility(true);
@@ -204,8 +226,10 @@ namespace KlyrasReach.Player
         /// </summary>
         private void DisablePlayerController()
         {
+            if (_closestPlayerObject == null) return;
+
             // Try to find Opsive character controller
-            var locomotion = _playerObject.GetComponent<Opsive.UltimateCharacterController.Character.UltimateCharacterLocomotion>();
+            var locomotion = _closestPlayerObject.GetComponent<Opsive.UltimateCharacterController.Character.UltimateCharacterLocomotion>();
             if (locomotion != null)
             {
                 _playerController = locomotion;
@@ -215,7 +239,7 @@ namespace KlyrasReach.Player
             }
 
             // Fallback: disable any CharacterController component
-            var charController = _playerObject.GetComponent<CharacterController>();
+            var charController = _closestPlayerObject.GetComponent<CharacterController>();
             if (charController != null)
             {
                 charController.enabled = false;
@@ -236,10 +260,13 @@ namespace KlyrasReach.Player
             }
 
             // Fallback: re-enable CharacterController
-            var charController = _playerObject.GetComponent<CharacterController>();
-            if (charController != null)
+            if (_closestPlayerObject != null)
             {
-                charController.enabled = true;
+                var charController = _closestPlayerObject.GetComponent<CharacterController>();
+                if (charController != null)
+                {
+                    charController.enabled = true;
+                }
             }
         }
 
@@ -248,8 +275,10 @@ namespace KlyrasReach.Player
         /// </summary>
         private void SetPlayerVisibility(bool visible)
         {
+            if (_closestPlayerObject == null) return;
+
             // Find all renderers on player and children
-            Renderer[] renderers = _playerObject.GetComponentsInChildren<Renderer>();
+            Renderer[] renderers = _closestPlayerObject.GetComponentsInChildren<Renderer>();
             foreach (Renderer renderer in renderers)
             {
                 renderer.enabled = visible;

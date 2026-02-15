@@ -54,7 +54,8 @@ MonoBehaviour:
     m_Preset: {fileID: 0}
     m_BlockList: []
     m_Default: 1
-  m_ItemDefinition: {fileID: 114038489858704770, guid: 5481010ef14c32f4cb7b6661b0c59fb4, type: 2}
+  m_ItemDefinition: {fileID: 114038489858704770, guid: 5481010ef14c32f4cb7b6661b0c59fb4,
+    type: 2}
   m_SlotID: 0
   m_AnimatorItemID: 61
   m_AnimatorMovementSetID: 0
@@ -141,11 +142,13 @@ MonoBehaviour:
     version: 2
     RefIds:
     - rid: 0
-      type: {class: Sequence, ns: Opsive.UltimateCharacterController.Items.AnimatorAudioStates, asm: Opsive.UltimateCharacterController}
+      type: {class: Sequence, ns: Opsive.UltimateCharacterController.Items.AnimatorAudioStates,
+        asm: Opsive.UltimateCharacterController}
       data:
         m_ResetDelay: -1
     - rid: 1
-      type: {class: Sequence, ns: Opsive.UltimateCharacterController.Items.AnimatorAudioStates, asm: Opsive.UltimateCharacterController}
+      type: {class: Sequence, ns: Opsive.UltimateCharacterController.Items.AnimatorAudioStates,
+        asm: Opsive.UltimateCharacterController}
       data:
         m_ResetDelay: -1
 --- !u!114 &231266395
@@ -345,7 +348,8 @@ MonoBehaviour:
     version: 2
     RefIds:
     - rid: 1000
-      type: {class: CheckTargetImpactConditionBehaviour, ns: Opsive.UltimateCharacterController.Items.Actions.Impact, asm: Opsive.UltimateCharacterController}
+      type: {class: CheckTargetImpactConditionBehaviour, ns: Opsive.UltimateCharacterController.Items.Actions.Impact,
+        asm: Opsive.UltimateCharacterController}
       data:
         m_States:
         - m_Name: Default
@@ -356,7 +360,8 @@ MonoBehaviour:
           m_Bindings: []
         m_Enabled: 1
     - rid: 707337210847559682
-      type: {class: Simple, ns: Opsive.UltimateCharacterController.Items.Actions.Modules, asm: Opsive.UltimateCharacterController}
+      type: {class: Simple, ns: Opsive.UltimateCharacterController.Items.Actions.Modules,
+        asm: Opsive.UltimateCharacterController}
       data:
         m_States:
         - m_Name: Default
@@ -388,16 +393,19 @@ MonoBehaviour:
             m_StateName: 
             m_ItemSubstateIndex: 2
             m_AudioClipSet:
-              m_AudioConfig: {fileID: 11400000, guid: 61d14891b633d924d9bf777774fb3270, type: 2}
+              m_AudioConfig: {fileID: 11400000, guid: 61d14891b633d924d9bf777774fb3270,
+                type: 2}
               m_AudioClips: []
         m_CanStopIfInputStop: 0
         m_CanStopSubstateIndexAddition: 10
     - rid: 707337210847559683
-      type: {class: Sequence, ns: Opsive.UltimateCharacterController.Items.AnimatorAudioStates, asm: Opsive.UltimateCharacterController}
+      type: {class: Sequence, ns: Opsive.UltimateCharacterController.Items.AnimatorAudioStates,
+        asm: Opsive.UltimateCharacterController}
       data:
         m_ResetDelay: -1
     - rid: 707337210847559693
-      type: {class: GenericMagicImpactModule, ns: Opsive.UltimateCharacterController.Items.Actions.Modules.Magic, asm: Opsive.UltimateCharacterController}
+      type: {class: GenericMagicImpactModule, ns: Opsive.UltimateCharacterController.Items.Actions.Modules.Magic,
+        asm: Opsive.UltimateCharacterController}
       data:
         m_States:
         - m_Name: Default
@@ -420,7 +428,8 @@ MonoBehaviour:
         m_FailImpactActions:
           m_ImpactActions: []
     - rid: 707337210847559694
-      type: {class: AddForce, ns: Opsive.UltimateCharacterController.Items.Actions.Impact, asm: Opsive.UltimateCharacterController}
+      type: {class: AddForce, ns: Opsive.UltimateCharacterController.Items.Actions.Impact,
+        asm: Opsive.UltimateCharacterController}
       data:
         m_States:
         - m_Name: Default
@@ -438,7 +447,8 @@ MonoBehaviour:
         m_Mode: 0
         m_AddForceAtPosition: 0
     - rid: 5031970604905398276
-      type: {class: SimpleDamage, ns: Opsive.UltimateCharacterController.Items.Actions.Impact, asm: Opsive.UltimateCharacterController}
+      type: {class: SimpleDamage, ns: Opsive.UltimateCharacterController.Items.Actions.Impact,
+        asm: Opsive.UltimateCharacterController}
       data:
         m_States:
         - m_Name: Default
@@ -460,7 +470,8 @@ MonoBehaviour:
         m_ImpactRadius: 0
         m_ScaleDamageByImpactStrength: 0
     - rid: 5031970604905398281
-      type: {class: SimpleCaster, ns: Opsive.UltimateCharacterController.Items.Actions.Modules.Magic, asm: Opsive.UltimateCharacterController}
+      type: {class: SimpleCaster, ns: Opsive.UltimateCharacterController.Items.Actions.Modules.Magic,
+        asm: Opsive.UltimateCharacterController}
       data:
         m_States:
         - m_Name: Default
@@ -511,7 +522,8 @@ MonoBehaviour:
         m_InterruptSource: 0
         m_CastUpdateOnCast: 0
     - rid: 5031970604905398333
-      type: {class: ImpactEvent, ns: Opsive.UltimateCharacterController.Items.Actions.Impact, asm: Opsive.UltimateCharacterController}
+      type: {class: ImpactEvent, ns: Opsive.UltimateCharacterController.Items.Actions.Impact,
+        asm: Opsive.UltimateCharacterController}
       data:
         m_States:
         - m_Name: Default
@@ -526,7 +538,8 @@ MonoBehaviour:
         m_CallImpactCallbackOnOriginator: 1
         m_CallImpactCallbackOnTarget: 1
     - rid: 6628036602530103296
-      type: {class: SpawnProjectile, ns: Opsive.UltimateCharacterController.Items.Actions.Modules.Magic.CastEffects, asm: Opsive.UltimateCharacterController}
+      type: {class: SpawnProjectile, ns: Opsive.UltimateCharacterController.Items.Actions.Modules.Magic.CastEffects,
+        asm: Opsive.UltimateCharacterController}
       data:
         m_States:
         - m_Name: Default
@@ -541,7 +554,8 @@ MonoBehaviour:
         m_Delay: 0.02
         m_InitialDelay: -1
         m_AllowMultiTarget: 1
-        m_ProjectilePrefab: {fileID: 2587238294010252329, guid: 15a4ca5f004e03c458d1e903dd9ec3f2, type: 3}
+        m_ProjectilePrefab: {fileID: 2587238294010252329, guid: 15a4ca5f004e03c458d1e903dd9ec3f2,
+          type: 3}
         m_PositionOffset: {x: 0, y: 0, z: 0}
         m_RotationOffset: {x: 0, y: 0, z: 0}
         m_Speed: 10
@@ -652,7 +666,6 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -802,7 +815,6 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

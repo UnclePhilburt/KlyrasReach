@@ -55,19 +55,39 @@ namespace KlyrasReach.Player
         [Tooltip("Mouse sensitivity for looking")]
         [SerializeField] private float _mouseSensitivity = 3f;
 
+        [Header("Physics")]
+        [Tooltip("Center of mass offset (adjusts rotation pivot point) - Move backward on Z to rotate around center")]
+        [SerializeField] private Vector3 _centerOfMassOffset = new Vector3(0, 0, -25);
+
         [Header("Camera")]
         [Tooltip("Camera that follows this ship (assign your main camera here)")]
         [SerializeField] private Camera _shipCamera;
 
-        [Tooltip("Camera offset from ship (third-person view)")]
-        [SerializeField] private Vector3 _cameraOffset = new Vector3(0, 2, -10);
+        [Tooltip("Use first-person cockpit view (true) or third-person view (false)")]
+        [SerializeField] private bool _useFirstPersonView = true;
 
-        [Tooltip("How smoothly the camera follows the ship")]
+        [Tooltip("Cockpit camera position (first-person view) - position relative to ship")]
+        [SerializeField] private Vector3 _cockpitCameraPosition = new Vector3(0, 1.5f, 2f);
+
+        [Tooltip("Cockpit camera rotation offset")]
+        [SerializeField] private Vector3 _cockpitCameraRotation = Vector3.zero;
+
+        [Tooltip("Camera offset from ship (third-person view)")]
+        [SerializeField] private Vector3 _cameraOffset = new Vector3(0, 10, -100);
+
+        [Tooltip("How smoothly the camera follows the ship (third-person only)")]
         [SerializeField] private float _cameraSmoothing = 5f;
 
         [Header("Ship State")]
         [Tooltip("Is this ship currently being piloted?")]
         [SerializeField] private bool _isActive = false;
+
+        [Header("Thruster Effects")]
+        [Tooltip("Thruster particle systems (assign FX_Flame_Booster_Round prefabs)")]
+        [SerializeField] private ParticleSystem[] _thrusterEffects;
+
+        [Tooltip("Minimum speed before thrusters activate (0-1, percentage of max speed)")]
+        [SerializeField] private float _thrusterActivationThreshold = 0.1f;
 
         [Header("Audio")]
         [Tooltip("Continuous engine hum sound (looping)")]
@@ -90,9 +110,11 @@ namespace KlyrasReach.Player
 
         // Private movement variables
         private Rigidbody _rigidbody;
-        private float _currentSpeed = 0f;
-        private float _pitch = 0f; // Up/down rotation
-        private float _yaw = 0f;   // Left/right rotation
+        private float _currentSpeed = 0f;         // Current forward/backward speed
+        private float _currentStrafeSpeed = 0f;   // Current left/right speed (with momentum)
+        private float _currentVerticalSpeed = 0f; // Current up/down speed (with momentum)
+        private float _pitch = 0f;                // Up/down rotation
+        private float _yaw = 0f;                  // Left/right rotation
 
         // Audio sources
         private AudioSource _engineHumSource;
@@ -118,12 +140,16 @@ namespace KlyrasReach.Player
 
             // Configure rigidbody for ship flight
             _rigidbody.useGravity = false; // No gravity in space!
-            _rigidbody.isKinematic = false; // Non-kinematic for physical collisions
+            _rigidbody.isKinematic = true; // Start kinematic until someone pilots it
             _rigidbody.interpolation = RigidbodyInterpolation.Interpolate; // Smooth movement
             _rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous; // Better collision detection
             _rigidbody.linearDamping = 0f; // No drag for tight control
             _rigidbody.angularDamping = 5f; // High rotation drag for stable flight
             _rigidbody.mass = 1000f; // Heavy ship = less bouncy
+
+            // Set center of mass so ship rotates around its center, not the nose
+            _rigidbody.centerOfMass = _centerOfMassOffset;
+            Debug.Log($"[ShipController] Center of mass set to: {_centerOfMassOffset}");
 
             // Freeze rotation to prevent tumbling on collision
             _rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
@@ -243,7 +269,7 @@ namespace KlyrasReach.Player
             if (keyboard.spaceKey.isPressed) verticalInput = 1f;
             if (keyboard.leftCtrlKey.isPressed || keyboard.rightCtrlKey.isPressed) verticalInput = -1f;
 
-            // Calculate forward/backward movement
+            // Calculate forward/backward movement with acceleration
             if (forwardInput > 0)
             {
                 // Accelerate forward
@@ -260,24 +286,61 @@ namespace KlyrasReach.Player
                 _currentSpeed = Mathf.MoveTowards(_currentSpeed, 0f, _deceleration * Time.fixedDeltaTime);
             }
 
+            // Calculate strafe movement with acceleration (same feel as forward/backward)
+            if (strafeInput > 0)
+            {
+                // Accelerate right
+                _currentStrafeSpeed = Mathf.MoveTowards(_currentStrafeSpeed, _strafeSpeed, _acceleration * Time.fixedDeltaTime);
+            }
+            else if (strafeInput < 0)
+            {
+                // Accelerate left
+                _currentStrafeSpeed = Mathf.MoveTowards(_currentStrafeSpeed, -_strafeSpeed, _acceleration * Time.fixedDeltaTime);
+            }
+            else
+            {
+                // Decelerate when no input
+                _currentStrafeSpeed = Mathf.MoveTowards(_currentStrafeSpeed, 0f, _deceleration * Time.fixedDeltaTime);
+            }
+
+            // Calculate vertical movement with acceleration (same feel as forward/backward)
+            if (verticalInput > 0)
+            {
+                // Accelerate up
+                _currentVerticalSpeed = Mathf.MoveTowards(_currentVerticalSpeed, _verticalSpeed, _acceleration * Time.fixedDeltaTime);
+            }
+            else if (verticalInput < 0)
+            {
+                // Accelerate down
+                _currentVerticalSpeed = Mathf.MoveTowards(_currentVerticalSpeed, -_verticalSpeed, _acceleration * Time.fixedDeltaTime);
+            }
+            else
+            {
+                // Decelerate when no input
+                _currentVerticalSpeed = Mathf.MoveTowards(_currentVerticalSpeed, 0f, _deceleration * Time.fixedDeltaTime);
+            }
+
             // Calculate movement vector in ship's local space
             Vector3 movement = Vector3.zero;
 
-            // Forward/backward
+            // Forward/backward (with momentum)
             movement += transform.forward * _currentSpeed;
 
-            // Strafe left/right
-            movement += transform.right * strafeInput * _strafeSpeed;
+            // Strafe left/right (now with momentum!)
+            movement += transform.right * _currentStrafeSpeed;
 
-            // Up/down
-            movement += transform.up * verticalInput * _verticalSpeed;
+            // Up/down (now with momentum!)
+            movement += transform.up * _currentVerticalSpeed;
 
-            // Apply movement as force to rigidbody (allows physics collisions)
-            // Use AddForce with VelocityChange mode for direct control
-            _rigidbody.linearVelocity = movement;
+            // Apply movement using MovePosition for kinematic rigidbody
+            Vector3 newPosition = _rigidbody.position + movement * Time.fixedDeltaTime;
+            _rigidbody.MovePosition(newPosition);
 
             // Update engine audio based on speed
             UpdateEngineAudio();
+
+            // Update thruster particle effects based on movement
+            UpdateThrusterEffects();
         }
 
         /// <summary>
@@ -291,13 +354,28 @@ namespace KlyrasReach.Player
                 return;
             }
 
-            // Calculate target camera position (behind and above ship)
-            // No lerp needed - rigidbody interpolation already smooths movement
-            Vector3 targetPosition = transform.position + transform.TransformDirection(_cameraOffset);
-            _shipCamera.transform.position = targetPosition;
+            if (_useFirstPersonView)
+            {
+                // First-person cockpit view
+                // Position camera at cockpit position (relative to ship)
+                Vector3 cockpitPosition = transform.position + transform.TransformDirection(_cockpitCameraPosition);
+                _shipCamera.transform.position = cockpitPosition;
 
-            // Make camera look at the ship
-            _shipCamera.transform.LookAt(transform.position + transform.forward * 5f);
+                // Camera rotates with ship + cockpit rotation offset
+                Quaternion cockpitRotation = transform.rotation * Quaternion.Euler(_cockpitCameraRotation);
+                _shipCamera.transform.rotation = cockpitRotation;
+            }
+            else
+            {
+                // Third-person view (behind ship)
+                // Calculate target camera position (behind and above ship)
+                Vector3 targetPosition = transform.position + transform.TransformDirection(_cameraOffset);
+                _shipCamera.transform.position = targetPosition;
+
+                // Camera rotates with the ship (same direction ship is facing)
+                // This way when you turn the ship with mouse, camera follows
+                _shipCamera.transform.rotation = transform.rotation;
+            }
         }
 
         /// <summary>
@@ -305,13 +383,18 @@ namespace KlyrasReach.Player
         /// </summary>
         public void EnterShip(Camera playerCamera)
         {
+            Debug.Log($"[ShipController] EnterShip() called on '{gameObject.name}'");
+            Debug.Log($"[ShipController] BEFORE: _isActive = {_isActive}");
+
             _isActive = true;
             _shipCamera = playerCamera;
 
-            // Re-enable physics (in case it was disabled by landing pad)
+            Debug.Log($"[ShipController] AFTER: _isActive = {_isActive}");
+
+            // Keep rigidbody kinematic (required due to concave mesh colliders in ship interior)
             if (_rigidbody != null)
             {
-                _rigidbody.isKinematic = false;
+                _rigidbody.isKinematic = true;
             }
 
             // Lock cursor for flight controls
@@ -326,7 +409,7 @@ namespace KlyrasReach.Player
             // Start ship audio
             StartShipAudio();
 
-            Debug.Log($"[ShipController] Player entered ship '{gameObject.name}'");
+            Debug.Log($"[ShipController] Player entered ship '{gameObject.name}' - IsActive is now: {_isActive}");
         }
 
         /// <summary>
@@ -334,12 +417,26 @@ namespace KlyrasReach.Player
         /// </summary>
         public void ExitShip()
         {
+            Debug.Log($"[ShipController] ExitShip() called on '{gameObject.name}'");
+            Debug.Log($"[ShipController] BEFORE: _isActive = {_isActive}");
+
             _isActive = false;
 
+            Debug.Log($"[ShipController] AFTER: _isActive = {_isActive}");
+
             // Stop all movement
-            _rigidbody.linearVelocity = Vector3.zero;
-            _rigidbody.angularVelocity = Vector3.zero;
-            _currentSpeed = 0f;
+            if (_rigidbody != null)
+            {
+                _rigidbody.linearVelocity = Vector3.zero;
+                _rigidbody.angularVelocity = Vector3.zero;
+                _currentSpeed = 0f;
+                _currentStrafeSpeed = 0f;
+                _currentVerticalSpeed = 0f;
+
+                // Make ship kinematic so it doesn't drift when parked
+                _rigidbody.isKinematic = true;
+                Debug.Log("[ShipController] Set rigidbody to kinematic (ship parked)");
+            }
 
             // Unlock cursor
             Cursor.lockState = CursorLockMode.None;
@@ -348,7 +445,10 @@ namespace KlyrasReach.Player
             // Stop ship audio
             StopShipAudio();
 
-            Debug.Log($"[ShipController] Player exited ship '{gameObject.name}'");
+            // Stop thruster effects
+            StopThrusterEffects();
+
+            Debug.Log($"[ShipController] Player exited ship '{gameObject.name}' - IsActive is now: {_isActive}");
         }
 
         /// <summary>
@@ -420,6 +520,58 @@ namespace KlyrasReach.Player
         }
 
         /// <summary>
+        /// Updates thruster particle effects based on ship movement
+        /// </summary>
+        private void UpdateThrusterEffects()
+        {
+            if (!_isActive || _thrusterEffects == null || _thrusterEffects.Length == 0)
+            {
+                return;
+            }
+
+            // Calculate total movement intensity (0 to 1)
+            float forwardIntensity = Mathf.Abs(_currentSpeed) / _maxSpeed;
+            float strafeIntensity = Mathf.Abs(_currentStrafeSpeed) / _strafeSpeed;
+            float verticalIntensity = Mathf.Abs(_currentVerticalSpeed) / _verticalSpeed;
+
+            // Use the maximum intensity of all movement axes
+            float totalIntensity = Mathf.Max(forwardIntensity, strafeIntensity, verticalIntensity);
+
+            // Activate/deactivate thrusters based on movement
+            bool shouldBeActive = totalIntensity > _thrusterActivationThreshold;
+
+            foreach (ParticleSystem thruster in _thrusterEffects)
+            {
+                if (thruster == null) continue;
+
+                if (shouldBeActive)
+                {
+                    // Start particle system if not playing
+                    if (!thruster.isPlaying)
+                    {
+                        thruster.Play();
+                    }
+
+                    // Adjust emission rate based on intensity
+                    var emission = thruster.emission;
+                    emission.rateOverTimeMultiplier = Mathf.Lerp(10f, 100f, totalIntensity);
+
+                    // Adjust size based on intensity
+                    var main = thruster.main;
+                    main.startSizeMultiplier = Mathf.Lerp(0.5f, 1.5f, totalIntensity);
+                }
+                else
+                {
+                    // Stop particle system if playing
+                    if (thruster.isPlaying)
+                    {
+                        thruster.Stop();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Starts all ship audio when entering ship
         /// </summary>
         private void StartShipAudio()
@@ -471,6 +623,24 @@ namespace KlyrasReach.Player
         }
 
         /// <summary>
+        /// Stops all thruster particle effects when exiting ship
+        /// </summary>
+        private void StopThrusterEffects()
+        {
+            if (_thrusterEffects == null) return;
+
+            foreach (ParticleSystem thruster in _thrusterEffects)
+            {
+                if (thruster != null && thruster.isPlaying)
+                {
+                    thruster.Stop();
+                }
+            }
+
+            Debug.Log("[ShipController] Thruster effects stopped");
+        }
+
+        /// <summary>
         /// Draw debug information in Scene view
         /// </summary>
         private void OnDrawGizmosSelected()
@@ -478,6 +648,12 @@ namespace KlyrasReach.Player
             // Draw forward direction
             Gizmos.color = Color.blue;
             Gizmos.DrawRay(transform.position, transform.forward * 5f);
+
+            // Draw center of mass (rotation pivot point)
+            Gizmos.color = Color.red;
+            Vector3 centerOfMass = transform.position + transform.TransformDirection(_centerOfMassOffset);
+            Gizmos.DrawWireSphere(centerOfMass, 2f); // Red sphere shows rotation center
+            Gizmos.DrawLine(transform.position, centerOfMass);
 
             // Draw camera position preview
             if (_shipCamera != null || !Application.isPlaying)

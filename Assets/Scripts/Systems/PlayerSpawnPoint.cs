@@ -5,6 +5,11 @@
  * Spawns the player at a designated location when a scene loads.
  * Used for planet surface scenes - player spawns on foot at a landing zone.
  *
+ * NETWORK READY:
+ * - Single-player: Spawns local player with Instantiate()
+ * - Multiplayer: Will spawn networked player with PhotonNetwork.Instantiate()
+ * - Only local player gets camera/UI setup
+ *
  * HOW TO USE:
  * 1. Create an empty GameObject at your spawn location
  * 2. Add this script to it
@@ -13,11 +18,13 @@
  */
 
 using UnityEngine;
+using System.Collections;
 
 namespace KlyrasReach.Systems
 {
     /// <summary>
     /// Spawns the player character at a specific location when scene loads
+    /// NETWORK READY: Supports both local and networked spawning
     /// </summary>
     public class PlayerSpawnPoint : MonoBehaviour
     {
@@ -33,6 +40,10 @@ namespace KlyrasReach.Systems
 
         [Tooltip("Don't spawn player if they're boarding a ship")]
         [SerializeField] private bool _skipIfBoardingShip = true;
+
+        [Header("Network Settings")]
+        [Tooltip("Network spawn mode (will be auto-detected when PUN is installed)")]
+        [SerializeField] private NetworkSpawnMode _spawnMode = NetworkSpawnMode.Local;
 
         [Header("Camera Setup")]
         [Tooltip("Camera prefab to spawn (or leave empty to use existing Main Camera)")]
@@ -65,17 +76,16 @@ namespace KlyrasReach.Systems
                 return;
             }
 
-            // Check if player is boarding a ship
+            // Check if player is boarding a ship (using network-ready state manager)
             if (_skipIfBoardingShip)
             {
-                int isBoardingShip = PlayerPrefs.GetInt("IsBoardingShip", 0);
+                bool isBoardingShip = GameStateManager.Instance.IsBoardingShip;
                 Debug.Log($"[PlayerSpawnPoint] IsBoardingShip flag: {isBoardingShip}");
-                if (isBoardingShip == 1)
+                if (isBoardingShip)
                 {
                     Debug.Log("[PlayerSpawnPoint] Player is boarding ship - but no player exists! Clearing flag and spawning.");
                     // If the flag is set but no player exists, clear it and spawn normally
-                    PlayerPrefs.SetInt("IsBoardingShip", 0);
-                    PlayerPrefs.Save();
+                    GameStateManager.Instance.IsBoardingShip = false;
                 }
             }
 
@@ -276,5 +286,16 @@ namespace KlyrasReach.Systems
             Gizmos.color = new Color(0, 1, 0, 0.3f);
             Gizmos.DrawWireCube(transform.position + Vector3.up, new Vector3(0.5f, 1.8f, 0.5f));
         }
+    }
+
+    /// <summary>
+    /// Network spawn mode options
+    /// </summary>
+    public enum NetworkSpawnMode
+    {
+        /// <summary>Local single-player spawning</summary>
+        Local,
+        /// <summary>Networked multiplayer spawning (requires PUN)</summary>
+        Networked
     }
 }

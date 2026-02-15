@@ -228,7 +228,7 @@ namespace Opsive.UltimateCharacterController.Character.Abilities
             for (int i = 0; i < m_Rigidbodies.Length; ++i) {
                 m_StartData[(i * 4)] = m_Rigidbodies[i].position;
                 m_StartData[(i * 4) + 1] = m_Rigidbodies[i].rotation;
-                m_StartData[(i * 4) + 2] = m_Rigidbodies[i].velocity;
+                m_StartData[(i * 4) + 2] = m_Rigidbodies[i].linearVelocity;
                 m_StartData[(i * 4) + 3] = m_Rigidbodies[i].angularVelocity;
             }
             return m_StartData; 
@@ -249,7 +249,7 @@ namespace Opsive.UltimateCharacterController.Character.Abilities
             for (int i = 0; i < m_Rigidbodies.Length; ++i) {
                 m_Rigidbodies[i].position = (Vector3)m_StartData[(i * 4)];
                 m_Rigidbodies[i].rotation = (Quaternion)m_StartData[(i * 4) + 1];
-                m_Rigidbodies[i].velocity = (Vector3)m_StartData[(i * 4) + 2];
+                m_Rigidbodies[i].linearVelocity = (Vector3)m_StartData[(i * 4) + 2];
                 m_Rigidbodies[i].angularVelocity = (Vector3)m_StartData[(i * 4) + 3];
             }
         }

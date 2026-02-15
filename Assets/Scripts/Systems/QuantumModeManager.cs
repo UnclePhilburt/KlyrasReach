@@ -95,13 +95,15 @@ namespace KlyrasReach.Systems
             Keyboard keyboard = Keyboard.current;
             if (keyboard != null && keyboard[_toggleKey].wasPressedThisFrame && !_isTraveling)
             {
+                Debug.Log($"[QuantumMode] B key pressed! PlayerInShip: {_playerInShip}, RequireShip: {_requireShip}");
+
                 if (_playerInShip || !_requireShip)
                 {
                     ToggleQuantumMode();
                 }
                 else
                 {
-                    Debug.Log("[QuantumMode] Must be in a ship to use quantum mode");
+                    Debug.LogWarning("[QuantumMode] Must be in a ship to use quantum mode");
                 }
             }
         }
@@ -119,19 +121,39 @@ namespace KlyrasReach.Systems
                 return;
             }
 
+            Debug.Log($"[QuantumMode] ========== CheckIfInShip() at frame {Time.frameCount} ==========");
             GameObject[] ships = GameObject.FindGameObjectsWithTag(_shipTag);
+            Debug.Log($"[QuantumMode] Found {ships.Length} ships with tag '{_shipTag}'");
 
             _playerInShip = false;
 
             foreach (GameObject ship in ships)
             {
                 var shipController = ship.GetComponent<Player.ShipController>();
-                if (shipController != null && shipController.IsActive)
+                if (shipController != null)
                 {
-                    _playerInShip = true;
-                    return;
+                    bool isActive = shipController.IsActive;
+                    Debug.Log($"[QuantumMode] Ship '{ship.name}' has controller");
+                    Debug.Log($"[QuantumMode] Checking IsActive property... IsActive = {isActive}");
+
+                    if (isActive)
+                    {
+                        _playerInShip = true;
+                        Debug.Log($"[QuantumMode] ✓ Player is piloting ship: {ship.name}");
+                        return;
+                    }
+                    else
+                    {
+                        Debug.Log($"[QuantumMode] ✗ Ship is not active (player not piloting)");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"[QuantumMode] Ship '{ship.name}' has no ShipController!");
                 }
             }
+
+            Debug.Log($"[QuantumMode] ========== CheckIfInShip() complete - _playerInShip = {_playerInShip} ==========");
         }
 
         /// <summary>
@@ -214,11 +236,13 @@ namespace KlyrasReach.Systems
             Vector3 startPos = ship.transform.position;
             Vector3 endPos = destination.GetQuantumArrivalPosition();
 
+            Debug.Log($"[QuantumMode] ========== QUANTUM TRAVEL STARTING ==========");
             Debug.Log($"[QuantumMode] Quantum traveling to {destination.name}");
             Debug.Log($"[QuantumMode] Start pos: {startPos}, End pos: {endPos}, Distance: {Vector3.Distance(startPos, endPos)}");
 
             // Get rigidbody to properly move the ship
             Rigidbody shipRb = ship.GetComponent<Rigidbody>();
+            Debug.Log($"[QuantumMode] Ship rigidbody found: {shipRb != null}, IsKinematic: {shipRb?.isKinematic}");
 
             // Disable quantum mode UI during travel
             bool wasActive = _quantumModeActive;
@@ -226,6 +250,7 @@ namespace KlyrasReach.Systems
 
             // Travel animation
             float elapsed = 0f;
+            int frameCount = 0;
             while (elapsed < _travelDuration)
             {
                 elapsed += Time.deltaTime;
@@ -236,31 +261,42 @@ namespace KlyrasReach.Systems
 
                 // Move ship using rigidbody if available
                 Vector3 newPos = Vector3.Lerp(startPos, endPos, t);
+
                 if (shipRb != null)
                 {
-                    shipRb.MovePosition(newPos);
+                    // For kinematic bodies, we need to use transform.position directly
+                    ship.transform.position = newPos;
                 }
                 else
                 {
                     ship.transform.position = newPos;
                 }
 
+                // Log every 10 frames to avoid spam
+                if (frameCount % 10 == 0)
+                {
+                    Debug.Log($"[QuantumMode] Frame {frameCount}: Progress {_travelProgress:F2}, Position: {ship.transform.position}, Target: {newPos}");
+                }
+                frameCount++;
+
                 yield return null;
             }
 
-            // Ensure final position and stop all velocity
-            if (shipRb != null)
+            // Ensure final position
+            ship.transform.position = endPos;
+            Debug.Log($"[QuantumMode] Set final position to: {endPos}");
+            Debug.Log($"[QuantumMode] Ship actual position after set: {ship.transform.position}");
+
+            // Stop all velocity (only for non-kinematic bodies)
+            if (shipRb != null && !shipRb.isKinematic)
             {
-                shipRb.MovePosition(endPos);
                 shipRb.linearVelocity = Vector3.zero;
                 shipRb.angularVelocity = Vector3.zero;
             }
-            else
-            {
-                ship.transform.position = endPos;
-            }
 
-            Debug.Log($"[QuantumMode] Quantum travel complete - arrived at {endPos}");
+            Debug.Log($"[QuantumMode] ========== QUANTUM TRAVEL COMPLETE ==========");
+            Debug.Log($"[QuantumMode] Final ship position: {ship.transform.position}");
+            Debug.Log($"[QuantumMode] Distance traveled: {Vector3.Distance(startPos, ship.transform.position)}");
 
             // Always re-enable quantum mode after travel (assume player wants to keep using it)
             _quantumModeActive = true;

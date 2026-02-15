@@ -21,8 +21,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5b3c1c58ffb1e5c4cb1d6956423e6780, type: 3}
   - {fileID: 8300000, guid: 4cf6c20abf8132c4c8c2b1c5e20aa725, type: 3}
   - {fileID: 8300000, guid: ed6c804ead6563a49ae6346cec8c9b14, type: 3}
-  m_MinAudioVolume: 0.1
-  m_MaxAudioVolume: 0.1
   m_MinAudioPitch: 1
   m_MaxAudioPitch: 1
   m_OneClipPerFrame: 0
