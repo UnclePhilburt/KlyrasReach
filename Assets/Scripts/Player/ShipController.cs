@@ -116,6 +116,11 @@ namespace KlyrasReach.Player
         private float _pitch = 0f;                // Up/down rotation
         private float _yaw = 0f;                  // Left/right rotation
 
+        // Free look variables
+        private float _freeLookPitch = 0f;        // Camera free look up/down
+        private float _freeLookYaw = 0f;          // Camera free look left/right
+        private bool _isFreeLooking = false;      // Is Alt held?
+
         // Audio sources
         private AudioSource _engineHumSource;
         private AudioSource _engineThrustSource;
@@ -168,6 +173,12 @@ namespace KlyrasReach.Player
         /// </summary>
         private void Update()
         {
+            // Debug every 50 frames to see if Update is running
+            if (Time.frameCount % 50 == 0)
+            {
+                Debug.Log($"[ShipController] Update() on '{gameObject.name}' (Instance ID: {GetInstanceID()}) - _isActive: {_isActive}");
+            }
+
             // Only process input if ship is active (player is piloting)
             if (!_isActive)
             {
@@ -183,6 +194,11 @@ namespace KlyrasReach.Player
         /// </summary>
         private void LateUpdate()
         {
+            if (Time.frameCount % 50 == 0)
+            {
+                Debug.Log($"[ShipController] LateUpdate() - _isActive: {_isActive}");
+            }
+
             if (!_isActive)
             {
                 return;
@@ -202,6 +218,12 @@ namespace KlyrasReach.Player
                 return;
             }
 
+            // DEBUG: Check rigidbody constraints every frame
+            if (_rigidbody != null && Time.frameCount % 50 == 0) // Log every 50 frames to avoid spam
+            {
+                Debug.Log($"[ShipController] Rigidbody constraints: {_rigidbody.constraints}, isKinematic: {_rigidbody.isKinematic}");
+            }
+
             // Handle all flight movement
             HandleMovement();
 
@@ -214,18 +236,39 @@ namespace KlyrasReach.Player
         /// </summary>
         private void HandleMouseLook()
         {
+            // Check if Alt is held for free look
+            Keyboard keyboard = Keyboard.current;
+            _isFreeLooking = keyboard != null && (keyboard.leftAltKey.isPressed || keyboard.rightAltKey.isPressed);
+
             // Get mouse delta from new Input System
             Vector2 mouseDelta = Mouse.current.delta.ReadValue();
 
             float mouseX = mouseDelta.x * _mouseSensitivity * 0.1f; // Scale down for smoother control
             float mouseY = mouseDelta.y * _mouseSensitivity * 0.1f;
 
-            // Apply to pitch and yaw
-            _yaw += mouseX;
-            _pitch -= mouseY; // Negative because mouse up = pitch up
+            if (_isFreeLooking)
+            {
+                // Free look mode - apply mouse to camera offset only
+                _freeLookYaw += mouseX;
+                _freeLookPitch -= mouseY;
 
-            // Clamp pitch to prevent flipping upside down too much
-            _pitch = Mathf.Clamp(_pitch, -80f, 80f);
+                // Clamp free look to prevent extreme angles
+                _freeLookPitch = Mathf.Clamp(_freeLookPitch, -80f, 80f);
+                _freeLookYaw = Mathf.Clamp(_freeLookYaw, -120f, 120f);
+            }
+            else
+            {
+                // Normal mode - apply mouse to ship rotation
+                _yaw += mouseX;
+                _pitch -= mouseY; // Negative because mouse up = pitch up
+
+                // Clamp pitch to prevent flipping upside down too much
+                _pitch = Mathf.Clamp(_pitch, -80f, 80f);
+
+                // Smoothly reset free look when Alt released
+                _freeLookPitch = Mathf.Lerp(_freeLookPitch, 0f, Time.deltaTime * 5f);
+                _freeLookYaw = Mathf.Lerp(_freeLookYaw, 0f, Time.deltaTime * 5f);
+            }
         }
 
         /// <summary>
@@ -236,12 +279,12 @@ namespace KlyrasReach.Player
             // Create rotation from pitch and yaw
             Quaternion targetRotation = Quaternion.Euler(_pitch, _yaw, 0f);
 
-            // Smoothly rotate ship toward target
-            _rigidbody.MoveRotation(Quaternion.Slerp(
-                _rigidbody.rotation,
+            // Smoothly rotate TRANSFORM (ManualMovingPlatform syncs to rigidbody)
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
                 targetRotation,
                 Time.fixedDeltaTime * _turnSpeed
-            ));
+            );
         }
 
         /// <summary>
@@ -251,7 +294,11 @@ namespace KlyrasReach.Player
         {
             // Get input from keyboard using new Input System
             Keyboard keyboard = Keyboard.current;
-            if (keyboard == null) return; // No keyboard connected
+            if (keyboard == null)
+            {
+                Debug.LogWarning("[ShipController] Keyboard.current is NULL!");
+                return;
+            }
 
             float forwardInput = 0f;   // W/S
             float strafeInput = 0f;    // A/D
@@ -267,13 +314,21 @@ namespace KlyrasReach.Player
 
             // Vertical (Space/Ctrl)
             if (keyboard.spaceKey.isPressed) verticalInput = 1f;
+
+            // DEBUG: Log input detection
+            if (forwardInput != 0 || strafeInput != 0 || verticalInput != 0)
+            {
+                Debug.Log($"[ShipController] INPUT DETECTED! Forward: {forwardInput}, Strafe: {strafeInput}, Vertical: {verticalInput}");
+            }
             if (keyboard.leftCtrlKey.isPressed || keyboard.rightCtrlKey.isPressed) verticalInput = -1f;
 
             // Calculate forward/backward movement with acceleration
             if (forwardInput > 0)
             {
                 // Accelerate forward
+                float oldSpeed = _currentSpeed;
                 _currentSpeed = Mathf.MoveTowards(_currentSpeed, _maxSpeed, _acceleration * Time.fixedDeltaTime);
+                Debug.Log($"[ShipController] ACCELERATING: oldSpeed={oldSpeed}, newSpeed={_currentSpeed}, maxSpeed={_maxSpeed}, accel={_acceleration}, dt={Time.fixedDeltaTime}");
             }
             else if (forwardInput < 0)
             {
@@ -332,9 +387,18 @@ namespace KlyrasReach.Player
             // Up/down (now with momentum!)
             movement += transform.up * _currentVerticalSpeed;
 
-            // Apply movement using MovePosition for kinematic rigidbody
-            Vector3 newPosition = _rigidbody.position + movement * Time.fixedDeltaTime;
-            _rigidbody.MovePosition(newPosition);
+            // Apply movement
+            Debug.Log($"[ShipController] Movement vector: {movement}, magnitude: {movement.magnitude}");
+
+            // Move the TRANSFORM directly
+            // ManualMovingPlatform will sync Transform -> Rigidbody
+            // This way Opsive's character controller sees it as a moving platform
+            Vector3 oldPosition = transform.position;
+            Vector3 newPosition = transform.position + movement * Time.fixedDeltaTime;
+            transform.position = newPosition;
+
+            float actualMovement = Vector3.Distance(oldPosition, transform.position);
+            Debug.Log($"[ShipController] Transform moved: oldPos={oldPosition}, newPos={newPosition}, actualMovement={actualMovement}");
 
             // Update engine audio based on speed
             UpdateEngineAudio();
@@ -348,6 +412,8 @@ namespace KlyrasReach.Player
         /// </summary>
         private void UpdateCamera()
         {
+            Debug.Log($"[ShipController] UpdateCamera() called! _shipCamera: {(_shipCamera != null ? _shipCamera.name : "NULL")}, _useFirstPersonView: {_useFirstPersonView}");
+
             if (_shipCamera == null)
             {
                 Debug.LogWarning("[ShipController] Ship camera is null! Cannot update camera position.");
@@ -361,20 +427,38 @@ namespace KlyrasReach.Player
                 Vector3 cockpitPosition = transform.position + transform.TransformDirection(_cockpitCameraPosition);
                 _shipCamera.transform.position = cockpitPosition;
 
-                // Camera rotates with ship + cockpit rotation offset
-                Quaternion cockpitRotation = transform.rotation * Quaternion.Euler(_cockpitCameraRotation);
+                // Camera rotates with ship + cockpit rotation offset + free look offset
+                Quaternion freeLookRotation = Quaternion.Euler(_freeLookPitch, _freeLookYaw, 0f);
+                Quaternion cockpitRotation = transform.rotation * Quaternion.Euler(_cockpitCameraRotation) * freeLookRotation;
                 _shipCamera.transform.rotation = cockpitRotation;
             }
             else
             {
                 // Third-person view (behind ship)
-                // Calculate target camera position (behind and above ship)
-                Vector3 targetPosition = transform.position + transform.TransformDirection(_cameraOffset);
-                _shipCamera.transform.position = targetPosition;
 
-                // Camera rotates with the ship (same direction ship is facing)
-                // This way when you turn the ship with mouse, camera follows
-                _shipCamera.transform.rotation = transform.rotation;
+                if (_isFreeLooking)
+                {
+                    // Free look - orbit camera around ship
+                    // Create rotation from free look angles (relative to world space)
+                    Quaternion orbitRotation = Quaternion.Euler(_freeLookPitch, transform.eulerAngles.y + _freeLookYaw, 0f);
+
+                    // Calculate camera position - orbit around ship at same distance
+                    float distance = _cameraOffset.magnitude;
+                    Vector3 orbitOffset = orbitRotation * Vector3.back * distance;
+                    _shipCamera.transform.position = transform.position + orbitOffset;
+
+                    // Camera looks at ship
+                    _shipCamera.transform.LookAt(transform.position);
+                }
+                else
+                {
+                    // Normal third-person - camera follows ship rotation
+                    Vector3 targetPosition = transform.position + transform.TransformDirection(_cameraOffset);
+                    _shipCamera.transform.position = targetPosition;
+
+                    // Camera rotates with the ship
+                    _shipCamera.transform.rotation = transform.rotation;
+                }
             }
         }
 
@@ -383,18 +467,20 @@ namespace KlyrasReach.Player
         /// </summary>
         public void EnterShip(Camera playerCamera)
         {
-            Debug.Log($"[ShipController] EnterShip() called on '{gameObject.name}'");
+            Debug.Log($"[ShipController] EnterShip() called on '{gameObject.name}' (Instance ID: {GetInstanceID()})");
             Debug.Log($"[ShipController] BEFORE: _isActive = {_isActive}");
 
             _isActive = true;
             _shipCamera = playerCamera;
 
-            Debug.Log($"[ShipController] AFTER: _isActive = {_isActive}");
+            Debug.Log($"[ShipController] AFTER: _isActive = {_isActive} (Instance ID: {GetInstanceID()})");
 
             // Keep rigidbody kinematic (required due to concave mesh colliders in ship interior)
             if (_rigidbody != null)
             {
                 _rigidbody.isKinematic = true;
+                _rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+                Debug.Log("[ShipController] Rigidbody configured for flight");
             }
 
             // Lock cursor for flight controls

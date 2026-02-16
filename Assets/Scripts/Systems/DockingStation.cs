@@ -39,7 +39,7 @@ namespace KlyrasReach.Systems
         [SerializeField] private string _shipTag = "Ship";
 
         [Tooltip("Key to press to dock")]
-        [SerializeField] private Key _dockKey = Key.E;
+        [SerializeField] private Key _dockKey = Key.R;
 
         [Header("UI Settings")]
         [Tooltip("Color of the docking UI prompt")]
@@ -48,11 +48,25 @@ namespace KlyrasReach.Systems
         [Tooltip("Font size for docking prompt")]
         [SerializeField] private int _fontSize = 20;
 
+        [Header("Visual Outline")]
+        [Tooltip("Show visual outline of docking zone")]
+        [SerializeField] private bool _showOutline = true;
+
+        [Tooltip("Color of the docking zone outline")]
+        [SerializeField] private Color _outlineColor = Color.green;
+
+        [Tooltip("Width of the outline")]
+        [SerializeField] private float _outlineWidth = 0.5f;
+
+        [Tooltip("Pulse outline when ship is in range")]
+        [SerializeField] private bool _pulseWhenInRange = true;
+
         // Private state
         private bool _shipInRange = false;
         private GameObject _dockedShip = null;
         private Player.ShipController _shipController = null;
         private bool _isDocking = false;
+        private LineRenderer _lineRenderer;
 
         /// <summary>
         /// Validate trigger setup
@@ -66,7 +80,138 @@ namespace KlyrasReach.Systems
                 collider.isTrigger = true;
             }
 
+            // Create visual outline
+            if (_showOutline)
+            {
+                CreateOutline(collider);
+            }
+
             Debug.Log($"[DockingStation] '{_stationName}' initialized. Will load scene: {_destinationSceneName}");
+        }
+
+        /// <summary>
+        /// Creates a visual outline of the docking zone
+        /// </summary>
+        private void CreateOutline(Collider collider)
+        {
+            if (collider == null)
+                return;
+
+            // Create child object for line renderer
+            GameObject lineObj = new GameObject("DockingZoneOutline");
+            lineObj.transform.SetParent(transform);
+            lineObj.transform.localPosition = Vector3.zero;
+            lineObj.transform.localRotation = Quaternion.identity;
+
+            _lineRenderer = lineObj.AddComponent<LineRenderer>();
+            _lineRenderer.useWorldSpace = false;
+            _lineRenderer.loop = true;
+            _lineRenderer.startWidth = _outlineWidth;
+            _lineRenderer.endWidth = _outlineWidth;
+            _lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            _lineRenderer.startColor = _outlineColor;
+            _lineRenderer.endColor = _outlineColor;
+
+            // Create outline points based on collider type
+            if (collider is BoxCollider boxCollider)
+            {
+                CreateBoxOutline(boxCollider);
+            }
+            else if (collider is SphereCollider sphereCollider)
+            {
+                CreateSphereOutline(sphereCollider);
+            }
+        }
+
+        /// <summary>
+        /// Creates outline for BoxCollider
+        /// </summary>
+        private void CreateBoxOutline(BoxCollider boxCollider)
+        {
+            Vector3 center = boxCollider.center;
+            Vector3 size = boxCollider.size;
+            Vector3 halfSize = size / 2f;
+
+            // 12 edges of a box = 24 points (each edge needs 2 points)
+            // But we'll draw it as connected lines
+            Vector3[] corners = new Vector3[8];
+            corners[0] = center + new Vector3(-halfSize.x, -halfSize.y, -halfSize.z);
+            corners[1] = center + new Vector3(halfSize.x, -halfSize.y, -halfSize.z);
+            corners[2] = center + new Vector3(halfSize.x, -halfSize.y, halfSize.z);
+            corners[3] = center + new Vector3(-halfSize.x, -halfSize.y, halfSize.z);
+            corners[4] = center + new Vector3(-halfSize.x, halfSize.y, -halfSize.z);
+            corners[5] = center + new Vector3(halfSize.x, halfSize.y, -halfSize.z);
+            corners[6] = center + new Vector3(halfSize.x, halfSize.y, halfSize.z);
+            corners[7] = center + new Vector3(-halfSize.x, halfSize.y, halfSize.z);
+
+            // Draw bottom face, then verticals, then top face
+            _lineRenderer.positionCount = 16;
+
+            // Bottom face
+            _lineRenderer.SetPosition(0, corners[0]);
+            _lineRenderer.SetPosition(1, corners[1]);
+            _lineRenderer.SetPosition(2, corners[2]);
+            _lineRenderer.SetPosition(3, corners[3]);
+            _lineRenderer.SetPosition(4, corners[0]); // Close bottom face
+
+            // Vertical edges
+            _lineRenderer.SetPosition(5, corners[4]);
+            _lineRenderer.SetPosition(6, corners[5]);
+            _lineRenderer.SetPosition(7, corners[1]); // Connect to bottom
+            _lineRenderer.SetPosition(8, corners[2]);
+            _lineRenderer.SetPosition(9, corners[6]);
+            _lineRenderer.SetPosition(10, corners[7]);
+            _lineRenderer.SetPosition(11, corners[3]); // Connect to bottom
+
+            // Top face
+            _lineRenderer.SetPosition(12, corners[4]);
+            _lineRenderer.SetPosition(13, corners[5]);
+            _lineRenderer.SetPosition(14, corners[6]);
+            _lineRenderer.SetPosition(15, corners[7]);
+
+            _lineRenderer.loop = true;
+        }
+
+        /// <summary>
+        /// Creates outline for SphereCollider
+        /// </summary>
+        private void CreateSphereOutline(SphereCollider sphereCollider)
+        {
+            Vector3 center = sphereCollider.center;
+            float radius = sphereCollider.radius;
+
+            // Draw 3 circles (XY, XZ, YZ planes)
+            int segments = 32;
+            _lineRenderer.positionCount = segments * 3;
+
+            for (int i = 0; i < segments; i++)
+            {
+                float angle = (i / (float)segments) * Mathf.PI * 2f;
+                float nextAngle = ((i + 1) / (float)segments) * Mathf.PI * 2f;
+
+                // XY circle
+                _lineRenderer.SetPosition(i, center + new Vector3(
+                    Mathf.Cos(angle) * radius,
+                    Mathf.Sin(angle) * radius,
+                    0
+                ));
+
+                // XZ circle
+                _lineRenderer.SetPosition(segments + i, center + new Vector3(
+                    Mathf.Cos(angle) * radius,
+                    0,
+                    Mathf.Sin(angle) * radius
+                ));
+
+                // YZ circle
+                _lineRenderer.SetPosition(segments * 2 + i, center + new Vector3(
+                    0,
+                    Mathf.Cos(angle) * radius,
+                    Mathf.Sin(angle) * radius
+                ));
+            }
+
+            _lineRenderer.loop = false;
         }
 
         /// <summary>
@@ -74,6 +219,28 @@ namespace KlyrasReach.Systems
         /// </summary>
         private void Update()
         {
+            // Update outline pulse effect
+            if (_lineRenderer != null && _pulseWhenInRange && _shipInRange)
+            {
+                // Pulse the outline color
+                float pulse = (Mathf.Sin(Time.time * 3f) + 1f) / 2f; // 0 to 1
+                Color pulseColor = Color.Lerp(_outlineColor * 0.5f, _outlineColor, pulse);
+                _lineRenderer.startColor = pulseColor;
+                _lineRenderer.endColor = pulseColor;
+            }
+            else if (_lineRenderer != null)
+            {
+                // Reset to normal color
+                _lineRenderer.startColor = _outlineColor;
+                _lineRenderer.endColor = _outlineColor;
+            }
+
+            // Debug logging every 60 frames
+            if (Time.frameCount % 60 == 0)
+            {
+                Debug.Log($"[DockingStation] _shipInRange: {_shipInRange}, _dockedShip: {(_dockedShip != null ? _dockedShip.name : "null")}, _shipController: {(_shipController != null ? "exists" : "null")}, IsActive: {(_shipController != null ? _shipController.IsActive.ToString() : "N/A")}");
+            }
+
             // Only process input if we're the pilot of the ship in range
             if (!_shipInRange || _dockedShip == null || _shipController == null || _isDocking)
             {
@@ -83,12 +250,15 @@ namespace KlyrasReach.Systems
             // Only allow docking if player is piloting the ship
             if (!_shipController.IsActive)
             {
+                Debug.Log("[DockingStation] Ship controller not active - cannot dock");
                 return;
             }
 
             // IMPORTANT: Check if the LOCAL player is the one piloting this ship
-            if (!IsLocalPlayerPiloting())
+            bool isLocalPiloting = IsLocalPlayerPiloting();
+            if (!isLocalPiloting)
             {
+                Debug.Log("[DockingStation] Not local player piloting - cannot dock");
                 return;
             }
 
@@ -96,6 +266,7 @@ namespace KlyrasReach.Systems
             Keyboard keyboard = Keyboard.current;
             if (keyboard != null && keyboard[_dockKey].wasPressedThisFrame)
             {
+                Debug.Log("[DockingStation] R key pressed - initiating docking!");
                 InitiateDocking();
             }
         }
@@ -105,7 +276,7 @@ namespace KlyrasReach.Systems
         /// </summary>
         private bool IsLocalPlayerPiloting()
         {
-            // Find all player characters with ShipPilotingSystem
+            // METHOD 1: Check if there's a ShipPilotingSystem on local player (old system)
             Player.ShipPilotingSystem[] allPilotingSystems = FindObjectsByType<Player.ShipPilotingSystem>(FindObjectsSortMode.None);
 
             foreach (var pilotingSystem in allPilotingSystems)
@@ -114,11 +285,17 @@ namespace KlyrasReach.Systems
                 PhotonView pv = pilotingSystem.GetComponent<PhotonView>();
                 if (pv != null && pv.IsMine)
                 {
-                    // Check if this player is piloting (inside a ship)
-                    // We can't directly check if they're piloting, but we can check if ship controller is active
-                    // and assume the active ship is being piloted by the local player
                     return true;
                 }
+            }
+
+            // METHOD 2: Check if ship is active (works with SimpleShipPiloting setup)
+            // If the ship controller is active and no other players are piloting,
+            // assume the local player is piloting
+            if (_shipController != null && _shipController.IsActive)
+            {
+                // In single player or when we're the only one piloting, this is good enough
+                return true;
             }
 
             return false;
@@ -129,10 +306,13 @@ namespace KlyrasReach.Systems
         /// </summary>
         private void OnTriggerEnter(Collider other)
         {
+            Debug.Log($"[DockingStation] OnTriggerEnter - Something entered! Name: {other.gameObject.name}, Tag: {other.tag}");
+
             // Check if this is a ship
             if (other.CompareTag(_shipTag))
             {
                 GameObject ship = other.gameObject;
+                Debug.Log($"[DockingStation] ✓ Tag matches! Ship: {ship.name}");
 
                 // Get ship controller
                 Player.ShipController controller = ship.GetComponent<Player.ShipController>();
@@ -146,7 +326,11 @@ namespace KlyrasReach.Systems
                 _dockedShip = ship;
                 _shipController = controller;
 
-                Debug.Log($"[DockingStation] Ship '{ship.name}' entered docking range of '{_stationName}'");
+                Debug.Log($"[DockingStation] ✓✓ Ship '{ship.name}' entered docking range of '{_stationName}'");
+            }
+            else
+            {
+                Debug.Log($"[DockingStation] Tag mismatch. Looking for '{_shipTag}', got '{other.tag}'");
             }
         }
 
@@ -181,10 +365,10 @@ namespace KlyrasReach.Systems
 
             _isDocking = true;
 
-            // IMPORTANT: Save ship position so we can spawn back here when returning
+            // IMPORTANT: Save ship position so we can reposition it when returning
             if (_dockedShip != null)
             {
-                ShipSpawnManager.SaveShipPosition(_dockedShip.transform.position, _dockedShip.transform.rotation);
+                ShipRepositioner.SaveShipPosition(_dockedShip.transform.position, _dockedShip.transform.rotation);
                 Debug.Log($"[DockingStation] Saved ship position for return trip: {_dockedShip.transform.position}");
             }
 

@@ -70,6 +70,16 @@ namespace KlyrasReach.Systems
         }
 
         /// <summary>
+        /// Gets the saved ship position (for spawning flight ship from interior)
+        /// </summary>
+        /// <returns>The saved position and rotation</returns>
+        public static Vector3 GetSavedPosition(out Quaternion rotation)
+        {
+            rotation = _savedShipRotation;
+            return _hasSavedPosition ? _savedShipPosition : Vector3.zero;
+        }
+
+        /// <summary>
         /// Called when leaving the space scene
         /// </summary>
         private void OnDestroy()
@@ -109,19 +119,21 @@ namespace KlyrasReach.Systems
                 Debug.Log($"[ShipSpawnManager] Checking for ship. HasSavedPosition: {_hasSavedPosition}");
             }
 
+            // Check if ship already exists in scene (placed manually)
+            GameObject existingShip = FindShipInScene();
+
+            if (existingShip != null)
+            {
+                Debug.Log($"[ShipSpawnManager] Found existing ship in scene: {existingShip.name}");
+                _spawnedShip = existingShip;
+                PositionShip(existingShip);
+                // Don't call ParentPlayersToShip - let existing spawn systems handle that
+                yield break;
+            }
+
             // Only master client spawns the ship (prevents duplicates)
             if (PhotonNetwork.IsMasterClient)
             {
-                // Check if ship already exists (from previous scene)
-                GameObject existingShip = FindShipInScene();
-
-                if (existingShip != null && _spawnedShip != null)
-                {
-                    Debug.Log($"[ShipSpawnManager] Ship already exists: {existingShip.name}");
-                    PositionShip(existingShip);
-                    yield break;
-                }
-
                 // Determine spawn position
                 Vector3 spawnPosition;
                 Quaternion spawnRotation;

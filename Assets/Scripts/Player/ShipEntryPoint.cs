@@ -39,6 +39,7 @@ namespace KlyrasReach.Player
 
         // Private references
         private ShipController _shipController;
+        private ShipPassengerSync _passengerSync;
         private Transform _closestPlayerTransform;
         private GameObject _closestPlayerObject;
         private Camera _mainCamera;
@@ -61,6 +62,13 @@ namespace KlyrasReach.Player
                 Debug.LogError($"[ShipEntryPoint] No ShipController found on '{gameObject.name}'! Please add one.");
                 enabled = false;
                 return;
+            }
+
+            // Get passenger sync component
+            _passengerSync = GetComponent<ShipPassengerSync>();
+            if (_passengerSync == null)
+            {
+                Debug.LogWarning($"[ShipEntryPoint] No ShipPassengerSync found on '{gameObject.name}' - passengers won't stick to ship!");
             }
 
             // Find main camera
@@ -163,6 +171,13 @@ namespace KlyrasReach.Player
 
             Debug.Log($"[ShipEntryPoint] Player '{_closestPlayerObject.name}' entering ship '{gameObject.name}'");
 
+            // Register passenger with sync system (so they stick to ship floor)
+            if (_passengerSync != null)
+            {
+                _passengerSync.AddPassenger(_closestPlayerTransform);
+                Debug.Log($"[ShipEntryPoint] Character registered as passenger - will move with ship");
+            }
+
             // Disable player character controller
             DisablePlayerController();
 
@@ -204,6 +219,13 @@ namespace KlyrasReach.Player
 
             // Deactivate ship controls
             _shipController.ExitShip();
+
+            // Unregister passenger from sync system
+            if (_passengerSync != null)
+            {
+                _passengerSync.RemovePassenger(_closestPlayerTransform);
+                Debug.Log($"[ShipEntryPoint] Character unregistered as passenger");
+            }
 
             // Position player at exit point
             Vector3 exitPosition = transform.position + transform.TransformDirection(_exitOffset);

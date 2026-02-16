@@ -15,6 +15,7 @@ using UnityEngine;
 using Opsive.UltimateCharacterController.Character;
 using Opsive.UltimateCharacterController.Character.Abilities;
 using Opsive.UltimateCharacterController.Character.Abilities.AI;
+using Photon.Pun;
 
 namespace KlyrasReach.AI
 {
@@ -34,8 +35,7 @@ namespace KlyrasReach.AI
     /// </summary>
     public class EnemyAIController : MonoBehaviour
     {
-        // Static cached player reference (shared by all enemies for performance)
-        private static Transform _cachedPlayerTransform = null;
+        // No longer static - each enemy tracks their own target
 
         [Header("Enemy Info")]
         [Tooltip("Display name for this enemy")]
@@ -130,6 +130,9 @@ namespace KlyrasReach.AI
         private Rigidbody _rigidbody;
         private Collider[] _allColliders;
 
+        // Photon components
+        private PhotonView _photonView;
+
         // State tracking
         private EnemyAIState _currentState = EnemyAIState.Idle;
         private Transform _playerTransform;
@@ -162,6 +165,29 @@ namespace KlyrasReach.AI
         /// </summary>
         private void InitializeAI()
         {
+            // MULTIPLAYER: Check if this is a networked enemy
+            _photonView = GetComponent<PhotonView>();
+
+            // If in multiplayer, only Master Client runs AI
+            // Other clients will receive synced position/animations via Photon
+            if (_photonView != null && PhotonNetwork.IsConnected)
+            {
+                if (!PhotonNetwork.IsMasterClient)
+                {
+                    Debug.Log($"[EnemyAI] '{_enemyName}' is on non-master client - disabling AI (will sync from master)");
+                    enabled = false;
+                    return;
+                }
+                else
+                {
+                    Debug.Log($"[EnemyAI] '{_enemyName}' is on MASTER CLIENT - AI will run here");
+                }
+            }
+            else
+            {
+                Debug.Log($"[EnemyAI] '{_enemyName}' is in SINGLE PLAYER mode - AI will run normally");
+            }
+
             // Get Opsive character locomotion component
             _characterLocomotion = GetComponent<UltimateCharacterLocomotion>();
             if (_characterLocomotion == null)
@@ -245,16 +271,8 @@ namespace KlyrasReach.AI
                 existingHealthCanvas.gameObject.SetActive(false);
             }
 
-            // Find player using cached reference (performance optimization)
-            if (_cachedPlayerTransform == null)
-            {
-                GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-                if (playerObject != null)
-                {
-                    _cachedPlayerTransform = playerObject.transform;
-                }
-            }
-            _playerTransform = _cachedPlayerTransform;
+            // Find closest player (multiplayer support)
+            FindClosestPlayer();
 
             // Get health attribute for death detection
             _attributeManager = GetComponent<Opsive.UltimateCharacterController.Traits.AttributeManager>();
@@ -286,6 +304,12 @@ namespace KlyrasReach.AI
         /// </summary>
         private void Update()
         {
+            // MULTIPLAYER: Only run AI on master client
+            if (_photonView != null && PhotonNetwork.IsConnected && !PhotonNetwork.IsMasterClient)
+            {
+                return; // Other clients don't run AI - they receive synced data from master
+            }
+
             if (!_isInitialized)
                 return;
 
@@ -386,10 +410,67 @@ namespace KlyrasReach.AI
         }
 
         /// <summary>
+        /// Find the closest player (multiplayer support)
+        /// Called periodically for performance
+        /// </summary>
+        private void FindClosestPlayer()
+        {
+            // Find all players in the scene
+            GameObject[] allPlayers = GameObject.FindGameObjectsWithTag("Player");
+
+            Debug.Log($"[EnemyAI] '{_enemyName}' FindClosestPlayer: Found {allPlayers.Length} players with 'Player' tag");
+
+            if (allPlayers.Length == 0)
+            {
+                _playerTransform = null;
+                return;
+            }
+
+            // Find closest player
+            Transform closestPlayer = null;
+            float closestDistance = float.MaxValue;
+
+            foreach (GameObject player in allPlayers)
+            {
+                // Skip if player is dead or invalid
+                if (player == null || !player.activeInHierarchy)
+                {
+                    Debug.Log($"[EnemyAI] Skipping null or inactive player");
+                    continue;
+                }
+
+                float sqrDist = (player.transform.position - transform.position).sqrMagnitude;
+                float actualDist = Mathf.Sqrt(sqrDist);
+
+                Debug.Log($"[EnemyAI] Player '{player.name}' at position {player.transform.position}, distance: {actualDist:F2}m from enemy at {transform.position}");
+
+                if (sqrDist < closestDistance)
+                {
+                    closestDistance = sqrDist;
+                    closestPlayer = player.transform;
+                }
+            }
+
+            if (closestPlayer != null)
+            {
+                Debug.Log($"[EnemyAI] '{_enemyName}' selected closest player: '{closestPlayer.name}' at distance {Mathf.Sqrt(closestDistance):F2}m");
+            }
+
+            _playerTransform = closestPlayer;
+        }
+
+        /// <summary>
         /// Detect if player is within range (optimized with sqrMagnitude)
         /// </summary>
         private void DetectPlayer()
         {
+            // Update closest player target periodically (every few detection checks)
+            // This allows enemies to switch targets if a closer player appears
+            if (Time.frameCount % 60 == 0) // Every 60 frames (~1 second at 60fps)
+            {
+                FindClosestPlayer();
+            }
+
             if (_playerTransform == null)
                 return;
 
@@ -397,11 +478,14 @@ namespace KlyrasReach.AI
             float distanceToPlayer = _useDistanceLOD ? _cachedDistanceToPlayer :
                 Vector3.Distance(transform.position, _playerTransform.position);
 
+            Debug.Log($"[EnemyAI] '{_enemyName}' DetectPlayer: Distance to '{_playerTransform.name}' is {distanceToPlayer:F2}m (Attack range: {_attackRange}m, Detection range: {_detectionRange}m)");
+
             // Check if player is within attack range
             if (distanceToPlayer <= _attackRange)
             {
                 if (_currentState != EnemyAIState.Attacking)
                 {
+                    Debug.Log($"[EnemyAI] '{_enemyName}' ENTERING ATTACK STATE - player within {_attackRange}m");
                     ChangeState(EnemyAIState.Attacking);
                 }
             }
@@ -410,6 +494,7 @@ namespace KlyrasReach.AI
             {
                 if (_currentState == EnemyAIState.Idle)
                 {
+                    Debug.Log($"[EnemyAI] '{_enemyName}' ENTERING CHASE STATE - player within {_detectionRange}m");
                     ChangeState(EnemyAIState.Chasing);
                 }
             }
@@ -418,6 +503,7 @@ namespace KlyrasReach.AI
             {
                 if (_currentState != EnemyAIState.Idle)
                 {
+                    Debug.Log($"[EnemyAI] '{_enemyName}' RETURNING TO IDLE - player out of range");
                     ChangeState(EnemyAIState.Idle);
                 }
             }
@@ -560,23 +646,33 @@ namespace KlyrasReach.AI
 
             Vector3 targetPosition = _playerTransform.position;
 
+            Debug.Log($"[EnemyAI] '{_enemyName}' UpdatePath called - chasing '{_playerTransform.name}' at {targetPosition}");
+
             // Use PathfindingMovement if available
             if (_pathfindingMovement != null)
             {
+                Debug.Log($"[EnemyAI] Using PathfindingMovement ability");
                 _pathfindingMovement.SetDestination(targetPosition);
                 if (!_pathfindingMovement.Enabled)
                 {
+                    Debug.Log($"[EnemyAI] Enabling PathfindingMovement ability");
                     _pathfindingMovement.Enabled = true;
                 }
             }
             // Otherwise try NavMeshAgentMovement
             else if (_navMeshMovement != null)
             {
+                Debug.Log($"[EnemyAI] Using NavMeshAgentMovement ability");
                 _navMeshMovement.SetDestination(targetPosition);
                 if (!_navMeshMovement.Enabled)
                 {
+                    Debug.Log($"[EnemyAI] Enabling NavMeshAgentMovement ability");
                     _navMeshMovement.Enabled = true;
                 }
+            }
+            else
+            {
+                Debug.LogError($"[EnemyAI] '{_enemyName}' has NO pathfinding component! Cannot chase player!");
             }
 
             // Enable sprint using SpeedChange ability (only if enabled)
@@ -618,10 +714,38 @@ namespace KlyrasReach.AI
         /// </summary>
         private void PerformAttack()
         {
-            // TODO: Apply damage to player using Opsive's health system
-            // You can integrate with Opsive's Health component here:
-            // var playerHealth = _playerTransform.GetComponent<Opsive.UltimateCharacterController.Traits.Health>();
-            // if (playerHealth != null) playerHealth.Damage(_attackDamage);
+            if (_playerTransform == null)
+                return;
+
+            if (_debugMode)
+            {
+                Debug.Log($"[EnemyAI] '{_enemyName}' attacking player '{_playerTransform.name}' for {_attackDamage} damage!");
+            }
+
+            // Apply damage using Opsive's health system
+            var playerAttributeManager = _playerTransform.GetComponent<Opsive.UltimateCharacterController.Traits.AttributeManager>();
+            if (playerAttributeManager != null)
+            {
+                var healthAttribute = playerAttributeManager.GetAttribute("Health");
+                if (healthAttribute != null)
+                {
+                    // Damage the player
+                    healthAttribute.Value -= _attackDamage;
+
+                    if (_debugMode)
+                    {
+                        Debug.Log($"[EnemyAI] Player health is now: {healthAttribute.Value}/{healthAttribute.MaxValue}");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"[EnemyAI] Player '{_playerTransform.name}' has no Health attribute!");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[EnemyAI] Player '{_playerTransform.name}' has no AttributeManager component!");
+            }
         }
 
         /// <summary>
@@ -632,25 +756,31 @@ namespace KlyrasReach.AI
             if (_currentState == newState)
                 return;
 
+            Debug.Log($"[EnemyAI] '{_enemyName}' STATE CHANGE: {_currentState} → {newState}");
+
             _currentState = newState;
 
             // Handle state transitions
             switch (newState)
             {
                 case EnemyAIState.Idle:
+                    Debug.Log($"[EnemyAI] Stopping movement (entering Idle)");
                     StopMovement();
                     break;
 
                 case EnemyAIState.Chasing:
+                    Debug.Log($"[EnemyAI] Starting chase behavior");
                     _hasWanderTarget = false; // Clear wander target when chasing
                     UpdatePath(); // This will handle sprint enabling if needed
                     break;
 
                 case EnemyAIState.Attacking:
+                    Debug.Log($"[EnemyAI] Entering attack mode (stopping movement)");
                     StopMovement(); // This will stop sprinting
                     break;
 
                 case EnemyAIState.Dead:
+                    Debug.Log($"[EnemyAI] Enemy died");
                     StopMovement();
                     break;
             }

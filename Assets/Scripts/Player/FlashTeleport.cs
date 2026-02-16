@@ -16,6 +16,7 @@ using Opsive.UltimateCharacterController.Character;
 using Opsive.UltimateCharacterController.Character.Abilities;
 using System.Collections;
 using System;
+using Photon.Pun;
 
 namespace KlyrasReach.Player
 {
@@ -55,12 +56,29 @@ namespace KlyrasReach.Player
         private float _lastTeleportTime = -999f;
         private int _originalLayer;
         private Renderer[] _characterRenderers;
+        private PhotonView _photonView;
+
+        /// <summary>
+        /// Initialize - get PhotonView reference
+        /// </summary>
+        public override void Awake()
+        {
+            base.Awake();
+            _photonView = m_GameObject.GetComponent<PhotonView>();
+        }
 
         /// <summary>
         /// Can the ability start?
         /// </summary>
         public override bool CanStartAbility()
         {
+            // IMPORTANT: Only allow local player to teleport
+            if (_photonView != null && !_photonView.IsMine)
+            {
+                Debug.Log("[FlashTeleport] Not local player - cannot teleport");
+                return false;
+            }
+
             // Check cooldown
             if (Time.time < _lastTeleportTime + _cooldown)
             {
@@ -143,6 +161,12 @@ namespace KlyrasReach.Player
             m_CharacterLocomotion.StartCoroutine(TeleportSequence(startPosition));
 
             Debug.Log($"[FlashTeleport] Teleporting from {startPosition} to {_teleportTargetPosition}");
+
+            // Sync teleport effects to other players via RPC
+            if (_photonView != null)
+            {
+                _photonView.RPC("RPC_TeleportEffects", RpcTarget.Others, startPosition, _teleportTargetPosition);
+            }
         }
 
         /// <summary>
@@ -253,6 +277,50 @@ namespace KlyrasReach.Player
         public bool IsOnCooldown()
         {
             return Time.time < _lastTeleportTime + _cooldown;
+        }
+
+        /// <summary>
+        /// RPC to show teleport effects on remote clients
+        /// </summary>
+        [PunRPC]
+        private void RPC_TeleportEffects(Vector3 startPos, Vector3 endPos)
+        {
+            Debug.Log($"[FlashTeleport] RPC_TeleportEffects received - spawning effects for remote player");
+
+            // Spawn teleport OUT effect at start position (raised up 1 meter)
+            if (_teleportOutEffectPrefab != null)
+            {
+                Vector3 raisedStartPos = startPos + Vector3.up * 1f;
+                GameObject outEffect = UnityEngine.Object.Instantiate(_teleportOutEffectPrefab, raisedStartPos, Quaternion.identity);
+                UnityEngine.Object.Destroy(outEffect, 3f);
+            }
+
+            // Spawn teleport IN effect at end position after half duration (raised up 1 meter)
+            m_CharacterLocomotion.StartCoroutine(SpawnTeleportInEffectDelayed(endPos, _teleportDuration * 0.5f));
+        }
+
+        /// <summary>
+        /// Spawn teleport IN effect after a delay
+        /// </summary>
+        private IEnumerator SpawnTeleportInEffectDelayed(Vector3 position, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+
+            // Spawn teleport IN effect (raised up 1 meter)
+            if (_teleportInEffectPrefab != null)
+            {
+                Vector3 raisedPos = position + Vector3.up * 1f;
+                GameObject inEffect = UnityEngine.Object.Instantiate(_teleportInEffectPrefab, raisedPos, Quaternion.identity);
+                UnityEngine.Object.Destroy(inEffect, 3f);
+            }
+
+            // Extra sparkles (raised up 1 meter)
+            if (_extraSparkleEffect != null)
+            {
+                Vector3 raisedPos = position + Vector3.up * 1f;
+                GameObject sparkles = UnityEngine.Object.Instantiate(_extraSparkleEffect, raisedPos, Quaternion.identity);
+                UnityEngine.Object.Destroy(sparkles, 2f);
+            }
         }
     }
 }

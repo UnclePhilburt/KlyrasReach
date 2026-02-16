@@ -274,28 +274,34 @@ namespace KlyrasReach.Systems
 
         /// <summary>
         /// Tries to find the active player ship
-        /// OPTIMIZED: Only searches every 30 frames instead of every frame
         /// </summary>
         private void FindActiveShip()
         {
-            // PERFORMANCE: Only search every 30 frames (0.5 seconds at 60FPS)
-            // FindGameObjectsWithTag is EXTREMELY expensive!
-            if (Time.frameCount % 30 != 0)
-            {
-                return;
-            }
-
+            Debug.Log($"[DestinationMarker '{_destinationName}'] FindActiveShip() - Searching for ships with tag '{_shipTag}'");
             GameObject[] ships = GameObject.FindGameObjectsWithTag(_shipTag);
+            Debug.Log($"[DestinationMarker '{_destinationName}'] Found {ships.Length} ships");
 
             foreach (GameObject ship in ships)
             {
+                Debug.Log($"[DestinationMarker '{_destinationName}'] Checking ship: {ship.name}");
                 var shipController = ship.GetComponent<Player.ShipController>();
-                if (shipController != null && shipController.IsActive)
+                if (shipController != null)
                 {
-                    _playerShipTransform = ship.transform;
-                    return;
+                    Debug.Log($"[DestinationMarker '{_destinationName}'] Ship has controller, IsActive: {shipController.IsActive}");
+                    if (shipController.IsActive)
+                    {
+                        _playerShipTransform = ship.transform;
+                        Debug.Log($"[DestinationMarker '{_destinationName}'] ✓ Found active ship: {ship.name}");
+                        return;
+                    }
+                }
+                else
+                {
+                    Debug.Log($"[DestinationMarker '{_destinationName}'] Ship has NO ShipController component");
                 }
             }
+
+            Debug.Log($"[DestinationMarker '{_destinationName}'] No active ship found");
         }
 
         /// <summary>
@@ -336,8 +342,11 @@ namespace KlyrasReach.Systems
                 Vector3 directionToDestination = (transform.position - _mainCamera.transform.position).normalized;
                 float angle = Vector3.Angle(_mainCamera.transform.forward, directionToDestination);
 
+                Debug.Log($"[DestinationMarker '{_destinationName}'] Angle from camera: {angle:F1}° (max: {_viewAngle}°), Distance: {distance:F0}m");
+
                 if (angle > _viewAngle)
                 {
+                    Debug.Log($"[DestinationMarker '{_destinationName}'] Outside view angle - not showing");
                     return; // Not looking at it
                 }
 
