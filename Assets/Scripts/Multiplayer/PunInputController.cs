@@ -13,7 +13,9 @@
 using UnityEngine;
 using Photon.Pun;
 using Opsive.Shared.Events;
+using Opsive.Shared.Input; // For PlayerInputProxy
 using Opsive.UltimateCharacterController.Character;
+using KlyrasReach.UI;
 
 namespace KlyrasReach.Multiplayer
 {
@@ -64,6 +66,19 @@ namespace KlyrasReach.Multiplayer
             if (_locomotion != null)
             {
                 Debug.Log($"[PunInputController] Locomotion TimeScale: {_locomotion.TimeScale}");
+            }
+
+            // Apply saved look sensitivity to Opsive's PlayerInput via the proxy.
+            // The actual PlayerInput gets reparented to a different GameObject by
+            // Opsive on Awake, so we go through the PlayerInputProxy which stays
+            // on the player character and delegates to the real PlayerInput.
+            var inputProxy = GetComponent<PlayerInputProxy>();
+            if (inputProxy != null)
+            {
+                float savedSensitivity = PlayerPrefs.GetFloat("LookSensitivity", 0.5f);
+                float multiplier = LookSensitivitySettings.NormalizedToMultiplier(savedSensitivity);
+                inputProxy.LookSensitivityMultiplier = multiplier;
+                Debug.Log($"[PunInputController] Applied saved look sensitivity: {savedSensitivity:F2} → {multiplier:F2}x");
             }
 
             Debug.Log($"[PunInputController] LOCAL player setup complete - Opsive system will handle movement and animation");

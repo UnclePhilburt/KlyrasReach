@@ -78,7 +78,7 @@ MonoBehaviour:
   m_CategoryIDs: bf70bfd8
   m_Capacity: 1
   m_Prefabs:
-  - {fileID: 1746977596710176, guid: 36df015a8b225a74fab463194b213ee0, type: 3}
+  - {fileID: 1390554145216252, guid: 3c2a7872720e44a49b65c4cd4c6f8cb5, type: 3}
 --- !u!114 &114053257604410210
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,7 +146,7 @@ MonoBehaviour:
   m_CategoryIDs: bf70bfd8ad30ab33
   m_Capacity: 1
   m_Prefabs:
-  - {fileID: 798529714311038646, guid: 4c4efe98fbf79d643b2478da406744d2, type: 3}
+  - {fileID: 1641155801057914, guid: 530ce614de063a2408b35db1ea588ca7, type: 3}
 --- !u!114 &114219753444480056
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,7 +222,7 @@ MonoBehaviour:
   m_CategoryIDs: bf70bfd8fc68d90d
   m_Capacity: 1
   m_Prefabs:
-  - {fileID: 2189532944671014363, guid: 1170ef9dc35f0454297cead491980e1b, type: 3}
+  - {fileID: 1263653090820792422, guid: 747eee33db7b7eb42a6fa44f4bfcf330, type: 3}
 --- !u!114 &114346260507904370
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -302,7 +302,7 @@ MonoBehaviour:
   m_CategoryIDs: bf70bfd8ad30ab33
   m_Capacity: 1
   m_Prefabs:
-  - {fileID: 1319129606718160, guid: 394c9fb6025f43044949a5c1ed4713ab, type: 3}
+  - {fileID: 1864293839421932, guid: 6d844c8962fdefb4b9ef5b9f0753f8e7, type: 3}
 --- !u!114 &114575177125770392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -367,8 +367,7 @@ MonoBehaviour:
   m_ID: 13
   m_CategoryIDs: bf70bfd8fc68d90d
   m_Capacity: 1
-  m_Prefabs:
-  - {fileID: 1614909833409388, guid: d0d050efd2052034f8b97c2e54954f84, type: 3}
+  m_Prefabs: []
 --- !u!114 &114670242716888252
 MonoBehaviour:
   m_ObjectHideFlags: 0

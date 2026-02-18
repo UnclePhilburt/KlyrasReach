@@ -222,7 +222,7 @@ MonoBehaviour:
   m_CategoryIDs: bf70bfd8fc68d90d
   m_Capacity: 1
   m_Prefabs:
-  - {fileID: 3433712269100172974, guid: debb1b2c86e740d41a453f28cc47f08d, type: 3}
+  - {fileID: 1263653090820792422, guid: 747eee33db7b7eb42a6fa44f4bfcf330, type: 3}
 --- !u!114 &114346260507904370
 MonoBehaviour:
   m_ObjectHideFlags: 0

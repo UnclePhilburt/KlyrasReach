@@ -11,6 +11,7 @@
  * 4. When connected and in a room, it auto-loads the game scene
  */
 
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
@@ -38,6 +39,25 @@ namespace KlyrasReach.Multiplayer
         [Header("Status Display (Optional)")]
         [Tooltip("UI Text to show connection status (optional)")]
         [SerializeField] private TMPro.TextMeshProUGUI _statusText;
+
+        // --- Events for UI controllers (e.g., MainMenuController) to subscribe to ---
+
+        /// <summary>
+        /// Fired whenever the connection status message changes.
+        /// Listeners receive the new status string.
+        /// </summary>
+        public event Action<string> OnStatusChanged;
+
+        /// <summary>
+        /// Fired when a connection error occurs (disconnect, room creation failure, etc.).
+        /// Listeners receive an error description string.
+        /// </summary>
+        public event Action<string> OnConnectionError;
+
+        /// <summary>
+        /// Whether the manager is currently in the process of connecting.
+        /// </summary>
+        public bool IsConnecting => _isConnecting;
 
         // Connection state
         private bool _isConnecting = false;
@@ -116,7 +136,7 @@ namespace KlyrasReach.Multiplayer
 
             if (string.IsNullOrEmpty(roomName))
             {
-                roomName = "Room_" + Random.Range(1000, 9999);
+                roomName = "Room_" + UnityEngine.Random.Range(1000, 9999);
             }
 
             UpdateStatus($"Creating room: {roomName}");
@@ -166,6 +186,9 @@ namespace KlyrasReach.Multiplayer
             Debug.LogWarning($"[MultiplayerConnectionManager] Disconnected: {cause}");
             _isConnecting = false;
             UpdateStatus($"Disconnected: {cause}");
+
+            // Notify listeners about the connection error
+            OnConnectionError?.Invoke($"Disconnected: {cause}");
         }
 
         /// <summary>
@@ -216,6 +239,9 @@ namespace KlyrasReach.Multiplayer
             Debug.LogError($"[MultiplayerConnectionManager] Create room failed: {message}");
             UpdateStatus($"Failed to create room: {message}");
             _isConnecting = false;
+
+            // Notify listeners about the room creation error
+            OnConnectionError?.Invoke($"Failed to create room: {message}");
         }
 
         /// <summary>
@@ -247,11 +273,15 @@ namespace KlyrasReach.Multiplayer
             {
                 _statusText.text = status;
             }
+
+            // Notify any listeners (MainMenuController, etc.) about the status change
+            OnStatusChanged?.Invoke(status);
         }
 
         /// <summary>
-        /// Display connection info for debugging
+        /// Display connection info for debugging (Editor only, so it doesn't overlay the Synty menu)
         /// </summary>
+#if UNITY_EDITOR
         private void OnGUI()
         {
             if (PhotonNetwork.IsConnected)
@@ -265,5 +295,6 @@ namespace KlyrasReach.Multiplayer
                 GUILayout.Label("Not connected");
             }
         }
+#endif
     }
 }

@@ -70,6 +70,11 @@ namespace KlyrasReach.Audio
         {
             SetupSpeakers();
 
+            // Override the Inspector volume with the player's saved preference.
+            // This way Settings slider changes carry into gameplay.
+            float savedVolume = PlayerPrefs.GetFloat("MusicVolume", _volume);
+            SetVolume(savedVolume);
+
             // Initialize shuffle if needed
             if (_playlistMode == PlaylistMode.Shuffle && _playlist != null && _playlist.Length > 0)
             {

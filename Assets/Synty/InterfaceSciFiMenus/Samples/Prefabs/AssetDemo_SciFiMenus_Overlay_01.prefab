@@ -67,13 +67,11 @@ MonoBehaviour:
   showCursor: 1
   _sceneNames:
   - 00_Demo_SciFiMenus_Title
-  - 01_Demo_SciFiMenus_Screen_MainMenu_01
   - 02_Demo_SciFiMenus_Screen_MainMenu_02
   - 03_Demo_SciFiMenus_Screen_MainMenu_03
   - 04_Demo_SciFiMenus_Screen_MainMenu_04
   - 05_Demo_SciFiMenus_Screen_Title_01
   - 06_Demo_SciFiMenus_Screen_Title_02
-  - 07_Demo_SciFiMenus_Screen_Title_03
   - 08_Demo_SciFiMenus_Screen_Title_04
   - 09_Demo_SciFiMenus_Components_Crests_01
   - 10_Demo_SciFiMenus_Components_Crests_02
@@ -103,6 +101,8 @@ MonoBehaviour:
   - 34_Demo_SciFiMenus_Input_01_NintendoSwitch
   - 35_Demo_SciFiMenus_Input_01_KeyboardMouse
   - 36_Demo_SciFiMenus_Input_01_SteamDeck
+  - KlyraMainMenu
+  - KlyraTitleScreen
 --- !u!1001 &5316325786564872504
 PrefabInstance:
   m_ObjectHideFlags: 0

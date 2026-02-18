@@ -14,11 +14,13 @@
 using UnityEngine;
 using Opsive.UltimateCharacterController.Traits;
 using Opsive.UltimateCharacterController.Traits.Damage;
+using KlyrasReach.AI;
 
 namespace KlyrasReach.Combat
 {
     /// <summary>
-    /// Applies damage when fireball hits something
+    /// Applies damage when fireball hits something.
+    /// In multiplayer, routes damage through NetworkEnemySync for proper sync.
     /// </summary>
     public class FireballDamage : MonoBehaviour
     {
@@ -40,89 +42,105 @@ namespace KlyrasReach.Combat
             {
                 return;
             }
-            _hasHit = true;
 
-            // Check if we hit something on a damageable layer
+            // Check if we hit something on a damageable layer BEFORE marking as hit
+            // Otherwise the fireball gets "spent" on non-damageable objects (ground, walls)
+            // and can never damage the actual enemy
             if ((_damageableLayers.value & (1 << collision.gameObject.layer)) == 0)
             {
                 return;
             }
 
-            // Try to damage the object using Opsive's Health system
-            var health = collision.gameObject.GetComponent<Health>();
-            if (health == null)
+            _hasHit = true;
+
+            Vector3 hitPoint = collision.contacts[0].point;
+            Vector3 hitDirection = collision.contacts[0].normal * -1;
+
+            // MULTIPLAYER: Route damage through NetworkEnemySync if available
+            var networkSync = collision.gameObject.GetComponent<NetworkEnemySync>();
+            if (networkSync == null)
             {
-                health = collision.gameObject.GetComponentInParent<Health>();
+                networkSync = collision.gameObject.GetComponentInParent<NetworkEnemySync>();
             }
 
-            if (health != null)
+            if (networkSync != null)
             {
-                // Create damage data using Opsive's system
-                var damageData = new DamageData();
-                damageData.SetDamage(
-                    _damageAmount,                          // amount
-                    collision.contacts[0].point,            // position
-                    collision.contacts[0].normal * -1,      // direction (inward)
-                    _impactForce,                           // forceMagnitude
-                    1,                                      // frames
-                    0,                                      // radius
-                    gameObject,                             // attacker
-                    this,                                   // attackerObject
-                    collision.collider                      // hitCollider
-                );
+                networkSync.RequestDamage(_damageAmount, hitPoint, hitDirection, gameObject);
+            }
+            else
+            {
+                // Single player / non-networked target: use Opsive Health directly
+                var health = collision.gameObject.GetComponent<Health>();
+                if (health == null)
+                {
+                    health = collision.gameObject.GetComponentInParent<Health>();
+                }
 
-                // Apply damage
-                health.Damage(damageData);
+                if (health != null)
+                {
+                    var damageData = new DamageData();
+                    damageData.SetDamage(
+                        _damageAmount, hitPoint, hitDirection,
+                        _impactForce, 1, 0,
+                        gameObject, this, collision.collider
+                    );
+                    health.Damage(damageData);
+                }
             }
 
             // Apply impact force to rigidbodies
             var rb = collision.rigidbody;
             if (rb != null)
             {
-                Vector3 forceDirection = collision.contacts[0].normal * -1;
-                rb.AddForce(forceDirection * _impactForce);
+                rb.AddForce(hitDirection * _impactForce);
             }
         }
 
         private void OnTriggerEnter(Collider other)
         {
             if (_hasHit) return;
-            _hasHit = true;
 
-            // Check if we hit something on a damageable layer
+            // Check layer BEFORE marking as hit (same reason as OnCollisionEnter)
             if ((_damageableLayers.value & (1 << other.gameObject.layer)) == 0)
             {
                 return;
             }
 
-            // Try to damage the object
-            var health = other.GetComponent<Health>();
-            if (health == null)
+            _hasHit = true;
+
+            Vector3 hitPoint = other.ClosestPoint(transform.position);
+            Vector3 hitDirection = (other.transform.position - transform.position).normalized;
+
+            // MULTIPLAYER: Route damage through NetworkEnemySync if available
+            var networkSync = other.GetComponent<NetworkEnemySync>();
+            if (networkSync == null)
             {
-                health = other.GetComponentInParent<Health>();
+                networkSync = other.GetComponentInParent<NetworkEnemySync>();
             }
 
-            if (health != null)
+            if (networkSync != null)
             {
-                // Create damage data using Opsive's system
-                Vector3 hitPoint = other.ClosestPoint(transform.position);
-                Vector3 hitDirection = (other.transform.position - transform.position).normalized;
+                networkSync.RequestDamage(_damageAmount, hitPoint, hitDirection, gameObject);
+            }
+            else
+            {
+                // Single player / non-networked target: use Opsive Health directly
+                var health = other.GetComponent<Health>();
+                if (health == null)
+                {
+                    health = other.GetComponentInParent<Health>();
+                }
 
-                var damageData = new DamageData();
-                damageData.SetDamage(
-                    _damageAmount,                          // amount
-                    hitPoint,                               // position
-                    hitDirection,                           // direction
-                    _impactForce,                           // forceMagnitude
-                    1,                                      // frames
-                    0,                                      // radius
-                    gameObject,                             // attacker
-                    this,                                   // attackerObject
-                    other                                   // hitCollider
-                );
-
-                // Apply damage
-                health.Damage(damageData);
+                if (health != null)
+                {
+                    var damageData = new DamageData();
+                    damageData.SetDamage(
+                        _damageAmount, hitPoint, hitDirection,
+                        _impactForce, 1, 0,
+                        gameObject, this, other
+                    );
+                    health.Damage(damageData);
+                }
             }
         }
     }

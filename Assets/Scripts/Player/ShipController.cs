@@ -20,6 +20,7 @@
 
 using UnityEngine;
 using UnityEngine.InputSystem;
+using KlyrasReach.UI;
 
 namespace KlyrasReach.Player
 {
@@ -29,6 +30,12 @@ namespace KlyrasReach.Player
     /// </summary>
     public class ShipController : MonoBehaviour
     {
+        // =====================================================================
+        // STATIC INSTANCE (for live sensitivity updates from settings menu)
+        // =====================================================================
+
+        // The currently active (piloted) ship — only one ship can be piloted at a time
+        private static ShipController _activeInstance;
         [Header("Flight Characteristics")]
         [Tooltip("Maximum forward speed")]
         [SerializeField] private float _maxSpeed = 50f;
@@ -165,6 +172,14 @@ namespace KlyrasReach.Player
             // Initialize audio sources
             InitializeAudio();
 
+            // Load saved look sensitivity from PlayerPrefs and apply it.
+            // The slider saves a 0-1 value; we convert it to a multiplier and
+            // scale the default _mouseSensitivity by that multiplier.
+            float savedSensitivity = PlayerPrefs.GetFloat("LookSensitivity", 0.5f);
+            float multiplier = LookSensitivitySettings.NormalizedToMultiplier(savedSensitivity);
+            _mouseSensitivity = 3f * multiplier; // 3 is the default base sensitivity
+            Debug.Log($"[ShipController] Applied saved look sensitivity: {savedSensitivity:F2} → multiplier {multiplier:F2}x → mouseSensitivity {_mouseSensitivity:F2}");
+
             Debug.Log($"[ShipController] Ship '{gameObject.name}' initialized. Max Speed: {_maxSpeed}");
         }
 
@@ -262,6 +277,10 @@ namespace KlyrasReach.Player
                 _yaw += mouseX;
                 _pitch -= mouseY; // Negative because mouse up = pitch up
 
+                // Keep yaw in 0-360 range to prevent float overflow in WebGL
+                // (large float values lose precision and cause jittery/inverted steering)
+                _yaw = _yaw % 360f;
+
                 // Clamp pitch to prevent flipping upside down too much
                 _pitch = Mathf.Clamp(_pitch, -80f, 80f);
 
@@ -272,18 +291,23 @@ namespace KlyrasReach.Player
         }
 
         /// <summary>
-        /// Applies rotation to the ship based on mouse input
+        /// Applies rotation to the ship based on mouse input.
+        /// The ship holds whatever direction the player set with the mouse.
+        /// Moving the mouse changes direction, stopping the mouse keeps the current heading.
         /// </summary>
         private void ApplyRotation()
         {
-            // Create rotation from pitch and yaw
+            // Create rotation from the accumulated pitch and yaw
             Quaternion targetRotation = Quaternion.Euler(_pitch, _yaw, 0f);
 
-            // Smoothly rotate TRANSFORM (ManualMovingPlatform syncs to rigidbody)
-            transform.rotation = Quaternion.Slerp(
+            // Smoothly rotate toward the target heading
+            // RotateTowards gives a consistent turn rate (degrees per second)
+            // instead of the sluggish exponential ease of Slerp
+            float maxDegrees = _turnSpeed * 100f * Time.fixedDeltaTime;
+            transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
                 targetRotation,
-                Time.fixedDeltaTime * _turnSpeed
+                maxDegrees
             );
         }
 
@@ -473,6 +497,9 @@ namespace KlyrasReach.Player
             _isActive = true;
             _shipCamera = playerCamera;
 
+            // Track this as the active ship so settings menu can update sensitivity live
+            _activeInstance = this;
+
             Debug.Log($"[ShipController] AFTER: _isActive = {_isActive} (Instance ID: {GetInstanceID()})");
 
             // Keep rigidbody kinematic (required due to concave mesh colliders in ship interior)
@@ -507,6 +534,12 @@ namespace KlyrasReach.Player
             Debug.Log($"[ShipController] BEFORE: _isActive = {_isActive}");
 
             _isActive = false;
+
+            // Clear the active instance so settings menu doesn't update a parked ship
+            if (_activeInstance == this)
+            {
+                _activeInstance = null;
+            }
 
             Debug.Log($"[ShipController] AFTER: _isActive = {_isActive}");
 
@@ -724,6 +757,27 @@ namespace KlyrasReach.Player
             }
 
             Debug.Log("[ShipController] Thruster effects stopped");
+        }
+
+        // =====================================================================
+        // STATIC SENSITIVITY CONTROL
+        // =====================================================================
+
+        /// <summary>
+        /// Updates the mouse sensitivity on the currently active (piloted) ship.
+        /// Called by LookSensitivitySettings when the player moves the slider.
+        /// If no ship is being piloted, the value is ignored (it will be loaded
+        /// from PlayerPrefs when the player next enters a ship).
+        /// </summary>
+        /// <param name="normalizedValue">Slider value in 0-1 range</param>
+        public static void SetLookSensitivity(float normalizedValue)
+        {
+            if (_activeInstance == null) return;
+
+            // Convert 0-1 to multiplier, then scale the base sensitivity (3.0)
+            float multiplier = LookSensitivitySettings.NormalizedToMultiplier(normalizedValue);
+            _activeInstance._mouseSensitivity = 3f * multiplier;
+            Debug.Log($"[ShipController] Live sensitivity update: {normalizedValue:F2} → {_activeInstance._mouseSensitivity:F2}");
         }
 
         /// <summary>

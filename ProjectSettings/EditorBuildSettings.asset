@@ -6,8 +6,14 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MultiplayerLobby.unity
-    guid: 3ce9e8e977d89bc4c86583ad87fa92ce
+    path: Assets/Synty/InterfaceSciFiMenus/Samples/Scenes/KlyraTitleScreen.unity
+    guid: 3cfcd52de1503df40a3877b1fba820e5
+  - enabled: 1
+    path: Assets/Synty/InterfaceSciFiMenus/Samples/Scenes/KlyraMainMenu.unity
+    guid: 3143962caad7ed842ba829b58a553d25
+  - enabled: 1
+    path: Assets/Synty/InterfaceSciFiMenus/Samples/Scenes/14_Demo_SciFiMenus_Screen_Loading_01.unity
+    guid: 2718f662c2679f44f8b491bea99b32c3
   - enabled: 1
     path: Assets/PolygonSciFiSpace/Scenes/Space Scene.unity
     guid: 60bc4c0d7fa81944290d3eaf8d44a851
@@ -20,6 +26,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/PolygonSciFiSpace/Scenes/OptimusSpacePort.unity
     guid: 4f23d0c185b3fdf4db412bfc78458279
+  - enabled: 1
+    path: Assets/Synty/InterfaceSciFiMenus/Samples/Scenes/18_Demo_SciFiMenus_Screen_Settings_01.unity
+    guid: f940e820970415949ba13320fbf8be9f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

@@ -7,6 +7,7 @@
 
 using UnityEngine;
 using Opsive.UltimateCharacterController.Traits;
+using KlyrasReach.AI;
 
 namespace KlyrasReach.Combat
 {
@@ -36,28 +37,42 @@ namespace KlyrasReach.Combat
 
             _hasHit = true;
 
-            // Try to find Health component on the object or its parent
-            var health = collision.gameObject.GetComponent<Health>();
-            if (health == null)
+            Vector3 hitPosition = collision.contacts[0].point;
+            Vector3 hitDirection = collision.contacts[0].normal * -1;
+
+            // MULTIPLAYER: Route damage through NetworkEnemySync if available
+            // This ensures damage is applied on the Master Client and synced to all
+            var networkSync = collision.gameObject.GetComponent<NetworkEnemySync>();
+            if (networkSync == null)
             {
-                health = collision.gameObject.GetComponentInParent<Health>();
+                networkSync = collision.gameObject.GetComponentInParent<NetworkEnemySync>();
             }
 
-            if (health != null)
+            if (networkSync != null)
             {
-                // Deal damage directly
-                health.Damage(_damageAmount);
+                networkSync.RequestDamage(_damageAmount, hitPosition, hitDirection, gameObject);
+            }
+            else
+            {
+                // Single player fallback: apply damage directly via Opsive Health
+                var health = collision.gameObject.GetComponent<Health>();
+                if (health == null)
+                {
+                    health = collision.gameObject.GetComponentInParent<Health>();
+                }
+
+                if (health != null)
+                {
+                    health.Damage(_damageAmount);
+                }
             }
 
             // Apply impact force
             var rb = collision.rigidbody;
             if (rb != null)
             {
-                Vector3 forceDirection = collision.contacts[0].normal * -1;
-                rb.AddForce(forceDirection * _impactForce);
+                rb.AddForce(hitDirection * _impactForce);
             }
-
-            // Let Opsive's TrajectoryObject handle destruction
         }
 
         private void OnTriggerEnter(Collider other)
@@ -72,20 +87,34 @@ namespace KlyrasReach.Combat
 
             _hasHit = true;
 
-            // Try to find Health component
-            var health = other.GetComponent<Health>();
-            if (health == null)
+            Vector3 hitPosition = other.ClosestPoint(transform.position);
+            Vector3 hitDirection = (other.transform.position - transform.position).normalized;
+
+            // MULTIPLAYER: Route damage through NetworkEnemySync if available
+            var networkSync = other.GetComponent<NetworkEnemySync>();
+            if (networkSync == null)
             {
-                health = other.GetComponentInParent<Health>();
+                networkSync = other.GetComponentInParent<NetworkEnemySync>();
             }
 
-            if (health != null)
+            if (networkSync != null)
             {
-                // Deal damage directly
-                health.Damage(_damageAmount);
+                networkSync.RequestDamage(_damageAmount, hitPosition, hitDirection, gameObject);
             }
+            else
+            {
+                // Single player fallback: apply damage directly via Opsive Health
+                var health = other.GetComponent<Health>();
+                if (health == null)
+                {
+                    health = other.GetComponentInParent<Health>();
+                }
 
-            // Let Opsive's TrajectoryObject handle destruction
+                if (health != null)
+                {
+                    health.Damage(_damageAmount);
+                }
+            }
         }
     }
 }

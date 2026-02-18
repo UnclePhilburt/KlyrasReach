@@ -87,6 +87,7 @@ MonoBehaviour:
   - RPC_PlayerEnteredZone
   - RPC_PlayerLeftZone
   - RPC_TeleportEffects
+  - RPC_RequestDamage
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

@@ -34,7 +34,7 @@ namespace Opsive.UltimateCharacterController.AddOns.Multiplayer.PhotonPun.Charac
         private Quaternion m_NetworkRotation;
         private Vector3 m_NetworkScale;
 
-        private int m_PlatformPhotonViewID;
+        private int m_PlatformPhotonViewID = -1;
         private Quaternion m_NetworkPlatformRotationOffset;
         private Quaternion m_NetworkPlatformPrevRotationOffset;
         private Vector3 m_NetworkPlatformRelativePosition;
@@ -92,7 +92,7 @@ namespace Opsive.UltimateCharacterController.AddOns.Multiplayer.PhotonPun.Charac
             // When the character is on a moving platform the position and rotation is relative to that platform. This allows the character to stay on the platform
             // even though the platform will not be in the exact same location between any two instances.
             var serializationRate = (1f / PhotonNetwork.SerializationRate) * m_RemoteInterpolationMultiplayer;
-            if (m_CharacterLocomotion.MovingPlatform != null) {
+            if (m_CharacterLocomotion != null && m_CharacterLocomotion.MovingPlatform != null) {
 #if ULTIMATE_CHARACTER_CONTROLLER_MULTIPLAYER
                 if (m_CharacterFootEffects != null && (m_NetworkPlatformPrevRelativePosition - m_NetworkPlatformRelativePosition).sqrMagnitude > 0.01f) {
                     m_CharacterFootEffects.CanPlaceFootstep = true;
@@ -128,7 +128,7 @@ namespace Opsive.UltimateCharacterController.AddOns.Multiplayer.PhotonPun.Charac
                 }
 
                 // When the character is on a platform the position and rotation is relative to that platform.
-                if (m_CharacterLocomotion.MovingPlatform != null) {
+                if (m_CharacterLocomotion != null && m_CharacterLocomotion.MovingPlatform != null) {
                     var platformPhotonView = m_CharacterLocomotion.MovingPlatform.gameObject.GetCachedComponent<PhotonView>();
                     if (platformPhotonView == null) {
                         Debug.LogError($"Error: The platform {m_CharacterLocomotion.MovingPlatform} must have a PhotonView.");
@@ -207,7 +207,9 @@ namespace Opsive.UltimateCharacterController.AddOns.Multiplayer.PhotonPun.Charac
                 } else {
                     var platformChange = false;
                     if (m_PlatformPhotonViewID != -1) {
-                        m_CharacterLocomotion.SetMovingPlatform(null, true);
+                        if (m_CharacterLocomotion != null) {
+                            m_CharacterLocomotion.SetMovingPlatform(null, true);
+                        }
                         m_PlatformPhotonViewID = -1;
                         platformChange = true;
                     }
